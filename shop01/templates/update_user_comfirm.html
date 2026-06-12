@@ -10,9 +10,9 @@
 
 <body>
 	<div>
-		<h3>以下の情報で登録しますか？</h3>
+		<h3>以下の情報で更新しますか？</h3>
         <div class="form">
-            <form action="{% url 'shop01:register_user_comfirm'%}" method='POST'>
+            <form action="{% url 'shop01:update_user_comfirm'%}" method='POST'>
                 {% csrf_token %}
                 
         <table>
@@ -39,7 +39,7 @@
             {% endfor %}
             </table>
                 </div>
-                <input type="submit" value="登録確認" />
+                <input type="submit" value="変更" />
 			</form>
 		</div>
         <a href="{% url 'shop01:main' %}">商品検索へ</a>

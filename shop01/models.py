@@ -18,6 +18,9 @@ class ShoppingCategory(models.Model):
     category_id = models.IntegerField(verbose_name='カテゴリID', primary_key=True)
     name = models.CharField(verbose_name='カテゴリ名', max_length=256)
 
+    def __str__(self):
+        return self.name
+
 
 class ShoppingItem(models.Model):
     class Meta:
@@ -48,7 +51,7 @@ class ShoppingPurchase(models.Model):
 
     purchase_id = models.IntegerField(verbose_name='注文ID', primary_key=True)
     destination = models.CharField(verbose_name='配送先', max_length=256)
-    booked_data = models.DateTimeField(verbose_name='注文日')
+    booked_date = models.DateTimeField(verbose_name='注文日')
     cancel = models.BooleanField(verbose_name='キャンセル', default=False)
     user = models.ForeignKey(AccountUser, verbose_name='注文者', on_delete=models.CASCADE)
 

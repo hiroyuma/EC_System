@@ -7,14 +7,13 @@
     <title>Login</title>
     <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
 </head>
-
 <body>
-	<div>
-		<h3>{{name}}会員登録が完了しました。</h3>
-    </div>
+    <h2>{{user_name}}さん、退会処理完了しました。</h2>
+    <br>
+    <h2>またのご利用をお待ちしております。</h2>
     <br>
     <br>
-    <a href="{% url 'shop01:main' %}">商品検索へ</a>
+    <a href="{% url 'shop01:login' %}">ログイン画面へ</a>
 </body>
 
 </html>

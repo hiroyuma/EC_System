@@ -1,0 +1,35 @@
+body {
+    padding: 5px;
+}
+
+table {
+	border: 1px #7f7f7f solid;
+	border-collapse: collapse;
+	margin-bottom: 4px;
+}
+
+th {
+	background-color: #cfcfff;
+	text-align: center;
+	border: 1px #7f7f7f solid;
+}
+
+td {
+	background-color: #ffffff;
+	text-align: center;
+	border: 1px #7f7f7f solid;
+}
+
+ul {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin-right: 10px;
+}
+
+p.error {
+	color:red;
+}

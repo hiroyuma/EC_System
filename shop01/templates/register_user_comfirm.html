@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+    <title>Login</title>
+    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
+</head>
+
+<body>
+	<div>
+		<h3>以下の情報で登録しますか？</h3>
+        <div class="form">
+            <form action="{% url 'shop01:register_user_comfirm'%}" method='POST'>    
+        <table>       
+        <tr>
+            <th>会員ID</th>
+            <td>
+                {{ form.user_id.value }}
+                <input type="hidden" name="user_id" value="{{ form.user_id.value }}">
+            </td>
+        </tr>
+        <tr>
+            <th>パスワード</th>
+            <td>
+                {{ form.password2.value }}
+                <input type="hidden" name="password1" value="{{ form.password1.value }}">
+                <input type="hidden" name="password2" value="{{ form.password2.value }}">
+            </td>
+        </tr>
+        <tr>
+            <th>お名前</th>
+            <td>
+                {{ form.name.value }}
+                <input type="hidden" name="name" value="{{ form.name.value }}">
+            </td>
+        </tr>
+        <tr>
+            <th>ご住所</th>
+            <td>
+                {{ form.address.value }}
+                <input type="hidden" name="address" value="{{ form.address.value }}">
+            </td>
+        </tr>
+    </table> 
+    </div>
+        <input type="submit" value="登録" />
+    </form>
+    </div>
+</body>
+
+
+</html>

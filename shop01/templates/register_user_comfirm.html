@@ -8,7 +8,7 @@
     <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
 </head>
 
-<body>
+<!--<body>
 	<div>
 		<h3>以下の情報で登録しますか？</h3>
         <div class="form">
@@ -48,6 +48,41 @@
         <input type="submit" value="登録" />
     </form>
     </div>
+</body>
+-->
+<body>
+	<div>
+		<h3>以下の情報で登録しますか？</h3>
+        <div class="form">
+            <form action="{% url 'shop01:register_user_comfirm'%}" method='POST'>
+                {% csrf_token %}
+                <table>
+                {% for field in form %}
+                {% if field.name != 'password2' %}
+                <tr>
+                    <th>{{field.label}}</th>
+                    <td>
+                        {% if field.errors %}
+                    <p class="error">{{field.errors.0}}</p>
+                    {% endif %}  
+                    {% if field.name == "password1" %}
+                    ●●●●●
+                    {% else %}
+                    {{ field.value }}
+                    {% endif %}
+                    </td>
+                    </tr>
+                    <input type="hidden" name="{{ field.name }}" value="{{ field.value }}">
+                    {% endif %}
+                    {% endfor %}    
+                    </table>           
+                </div>
+                
+                <input type="submit" value="登録確認" />
+			</form>
+		</div>
+        
+	</div>
 </body>
 
 

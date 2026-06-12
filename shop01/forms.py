@@ -7,7 +7,7 @@ class AccountCreateForm(forms.Form):
     
     user_id = forms.CharField(label='会員ID', max_length=128)
     password1 = forms.CharField(label='パスワード', max_length=256, widget=forms.PasswordInput(render_value=True))
-    password2 = forms.CharField(label='パスワード（確認用）',max_length=256, widget=forms.PasswordInput(render_value=True))
+    password2 = forms.CharField(label='パスワード', max_length=256, widget=forms.PasswordInput(render_value=True))
     name = forms.CharField(label='名前', max_length=128)
     address = forms.CharField(label='住所', max_length=256)
 

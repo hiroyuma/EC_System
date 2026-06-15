@@ -13,7 +13,7 @@
     <!--<div id="loginBtnDiv">-->
     </div>
     <div class="form">
-        <form action="{% url 'shop01:main' %}" method="GET">
+        <form action="{% url 'shop01:search_result' %}" method="GET">
             {% csrf_token %}
             <div class="search-form">
                 {% for field in form %}
@@ -30,7 +30,7 @@
         </form>
     </div>
     <br>
-    <a href="{% url 'shop01:register_user' %}">ショッピングカートを見る</a>
+    <a href="{% url 'shop01:cart' %}">ショッピングカートを見る</a>
     <p>ようこそ{{user_name}}</p>
     <a href="{% url 'shop01:user_info' %}">会員情報の確認</a><br>
     <a href="{% url 'shop01:update_user' %}">会員情報の変更</a><br>
@@ -39,7 +39,7 @@
     {% else %}
     <!--<div id="infoDiv" style="display: none;">-->
         <div class="form">
-            <form action="{% url 'shop01:main' %}" method="GET">
+            <form action="{% url 'shop01:search_result' %}" method="GET">
                 {% csrf_token %}
                 <div class="search-form">
                     {% for field in form %}
@@ -56,7 +56,7 @@
             </form>
         </div>
         <br>
-        <a href="{% url 'shop01:register_user' %}">ショッピングカートを見る</a><br>
+        <a href="{% url 'shop01:login' %}">ショッピングカートを見る</a><br>
         <a href="{% url 'shop01:login' %}">ログイン</a><br>
     </div>
     {% endif %}

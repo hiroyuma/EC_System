@@ -20,9 +20,9 @@
                             <p class="error">{{ field.errors.0 }}</p>
                         {% endif %}
                         {% if field.name == "password1" %}
-                            表示なし
+                            {{password_num}}
                         {% else %}
-                            {{ field.value }}
+                            {{ field }}
                         {% endif %}
                     </td>
                 </tr>

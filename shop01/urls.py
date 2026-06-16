@@ -18,4 +18,6 @@ urlpatterns = [
     path('item_detail/<int:item_id>/', views.ItemDetail.as_view(), name='item_detail'),
     path('cart/', views.Cart.as_view(), name='cart'),
     path('main/', views.SearchItem.as_view(), name = 'main'),
+    path("admin_login", views.AdminLogin.as_view(), name = 'admin_login'),
+    path('manager/main/', views.AdminMain.as_view(), name='admin_main'),
 ]

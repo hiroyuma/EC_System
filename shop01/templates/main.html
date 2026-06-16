@@ -35,6 +35,7 @@
     <a href="{% url 'shop01:user_info' %}">会員情報の確認</a><br>
     <a href="{% url 'shop01:update_user' %}">会員情報の変更</a><br>
     <a href="{% url 'shop01:logout' %}">ログアウト</a><br>
+    <a href="{% url 'shop01:admin_login' %}">管理者ページ</a><br>
     </div>
     {% else %}
     <!--<div id="infoDiv" style="display: none;">-->
@@ -58,6 +59,7 @@
         <br>
         <a href="{% url 'shop01:login' %}">ショッピングカートを見る</a><br>
         <a href="{% url 'shop01:login' %}">ログイン</a><br>
+        <a href="{% url 'shop01:admin_login' %}">管理者ページ</a><br>
     </div>
     {% endif %}
     <!--<script>

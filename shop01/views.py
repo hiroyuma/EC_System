@@ -3,6 +3,9 @@ from django.db import transaction
 from shop01.models import AccountUser, ShoppingItem, ShoppingItemincart, ShoppingPurchase, ShoppingPurchasedetail,ShoppingCategory
 from django.views.generic import View, TemplateView
 from shop01.forms import AdminPurchaseSearchForm,UserLoginForm, UserForm, KeywordForm, ItemNumForm, UpdataUserForm, ConfirmUserForm,AdminItemSearchForm, AdminItemForm
+from shop01.models import AccountUser, ShoppingItem, ShoppingItemincart, ShoppingPurchase, ShoppingPurchasedetail, AdministratorAdmin
+from django.views.generic import View, TemplateView
+from shop01.forms import UserLoginForm, UserForm, KeywordForm, ItemNumForm, UpdataUserForm, ConfirmUserForm, AdminLoginForm
 # Create your views here.
 
 class Toppage(View):
@@ -355,12 +358,51 @@ class Cart(View):
 
         return render(request, 'cart.html', context)
 
+class AdminLogin(View):
+    def get(self, request, *args, **kwargs):
+        form = AdminLoginForm()
+        context = {
+            'form':form,
+        }
+        return render(request, 'admin_login.html', context)
+        
+    def post(self, request, *args, **kwargs):
+        print("POSTの中身:", request.POST)
+        form = AdminLoginForm(request.POST)
+        print("バリデーション前")
+        if not form.is_valid():
+            print("a")
+            print("エラー内容:", form.errors)
+            account_list = AdministratorAdmin.objects.all()
+            context = {
+                'account_list':account_list,
+                'form':form
+            }
+            return render(request, "admin_login.html", context)
+
+        print("バリデーション通ったで")
+        
+        admin_id = form.cleaned_data.get('admin_id')
+        password = form.cleaned_data.get('password')
+        
+        
+        print("admin_id:", admin_id)   # ←⑤ここ
+        print("password:", password)
 
 
-    # def post(self, request, *args, **kwargs):
-
-    #     context = {}
-    #     return render(request, 'cart.html', context)
+        admin_info = AdministratorAdmin.objects.filter(admin_id=admin_id, password=password).first()
+        print("DBの中身:", admin_info)
+        if admin_info is None:
+            form.add_error(None,'会員IDまたはパスワードが間違っています')
+            context={
+                'form':form,
+            }
+            return render(request, 'admin_login.html', context)
+        
+        request.session['is_login'] = True
+        request.session['admin_id'] = admin_id
+        print("loginでsession:", request.session.get('is_login'))
+        return redirect('shop01:admin_main')
 
 
 class AdminMain(View):

@@ -24,4 +24,6 @@ urlpatterns = [
     path('manager/item/<int:item_id>/recommend/', views.AdminRecommendToggle.as_view(), name='admin_item_recommend'),
     path('manager/main/', views.AdminMain.as_view(), name='admin_main'),
     path('manager/purchase/<int:purchase_id>/cancel/', views.AdminPurchaseCancel.as_view(), name='admin_purchase_cancel'),
+    path("admin_login", views.AdminLogin.as_view(), name = 'admin_login'),
+    path('manager/main/', views.AdminMain.as_view(), name='admin_main'),
 ]

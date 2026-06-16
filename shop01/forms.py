@@ -74,8 +74,10 @@ class ItemNumForm(forms.Form):
         self.label_suffix = ''
         self.fields['stock'].choices = [(i, i) for i in range(1, stock_num + 1)]
 
+class AdminLoginForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_suffix = ''
 
-
-        
-    
-    
+    admin_id = forms.CharField(label='管理者ID', max_length=128)
+    password = forms.CharField(label='パスワード', max_length=256, widget=forms.PasswordInput())

@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+    <title>Login</title>
+    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
+</head>
+
+<body>
+    {% if request.session.is_login %}
+    <!--<div id="loginBtnDiv">-->
+    </div>
+    <div class="form">
+        <form action="{% url 'shop01:search_result' %}" method="GET">
+            {% csrf_token %}
+            <div class="search-form">
+                {% for field in form %}
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="error">
+                            {{ field.errors.0 }}
+                        </p>
+                    {% endif %}
+                {% endfor %}
+                <input type="submit" value="検索">
+            </div>
+        </form>
+    </div>
+    <br>
+    <a href="{% url 'shop01:cart' %}">ショッピングカートを見る</a>
+    <p>ようこそ{{user_name}}</p>
+    <a href="{% url 'shop01:user_info' %}">会員情報の確認</a><br>
+    <a href="{% url 'shop01:update_user' %}">会員情報の変更</a><br>
+    <a href="{% url 'shop01:logout' %}">ログアウト</a><br>
+    </div>
+    {% else %}
+    <!--<div id="infoDiv" style="display: none;">-->
+        <div class="form">
+            <form action="{% url 'shop01:search_result' %}" method="GET">
+                {% csrf_token %}
+                <div class="search-form">
+                    {% for field in form %}
+                        <label>{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="error">
+                                {{ field.errors.0 }}
+                            </p>
+                        {% endif %}
+                    {% endfor %}
+                    <input type="submit" value="検索">
+                </div>
+            </form>
+        </div>
+        <br>
+        <a href="{% url 'shop01:login' %}">ショッピングカートを見る</a><br>
+        <a href="{% url 'shop01:login' %}">ログイン</a><br>
+    </div>
+    {% endif %}
+    <!--<script>
+        var isLogin = '{{ request.session.is_login }}';
+        if(isLogin === 'True'){
+            document.getElementById('infoDiv').style.display = 'block';
+            document.getElementById('loginBtnDiv').style.display = 'none';
+        }
+        else{
+            document.getElementById('loginBtnDiv').style.display = 'block';
+            document.getElementById('infoDiv').style.display = 'none';
+        }
+
+    </script>-->
+
+</body>
+
+</html>

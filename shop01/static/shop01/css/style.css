@@ -1,0 +1,50 @@
+body {
+    padding: 5px;
+}
+
+table {
+	border: 1px #7f7f7f solid;
+	border-collapse: collapse;
+	margin-bottom: 4px;
+	width: 400px;
+}
+
+th {
+	background-color: #cfcfff;
+	text-align: center;
+	border: 1px #7f7f7f solid;
+	width: 120px;
+}
+
+td {
+	background-color: #ffffff;
+	text-align: center;
+	border: 1px #7f7f7f solid;
+	width: 280px;
+	padding: 8px;
+}
+
+ul {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin-right: 10px;
+}
+
+p.error {
+	color:red;
+}
+
+
+.confirm-value {
+    display: inline-block;
+    width: 95%;
+    padding: 4px 6px;
+    border: 1px solid #767676;
+    background-color: #ffffff;
+    box-sizing: border-box;
+    text-align: left;
+}

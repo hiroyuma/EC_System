@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>管理ダッシュボード</title>
+
+<style>
+body {
+    font-family: "Segoe UI", sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: 20px;
+}
+
+.header {
+    background: linear-gradient(90deg, #1976d2, #2196f3);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.dashboard {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.card {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.form-box {
+    background: white;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+}
+
+.btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-register { background: green; }
+.btn-delete { background: red; }
+.btn-recommend { background: blue; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #1976d2;
+    color: white;
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.badge-ok { background: #c8e6c9; }
+.badge-ng { background: #ffcdd2; }
+
+.inline-form { display: inline; }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>📊 管理ダッシュボード</h2>
+</div>
+
+<!-- KPI -->
+<div class="dashboard">
+    <div class="card">
+        <h3>商品数</h3>
+        <p>{{ items|length }}</p>
+    </div>
+    <div class="card">
+        <h3>注文数</h3>
+        <p>{{ purchases|length }}</p>
+    </div>
+</div>
+
+<!-- 商品検索 -->
+<div class="form-box">
+    <h2>📦 商品検索</h2>
+    <form method="get" action="{% url 'shop01:admin_main' %}">
+        {{ search_form.as_p }}
+        <button class="btn">検索</button>
+    </form>
+</div>
+
+<!-- 商品登録 -->
+<div class="form-box">
+    <h2>➕ 商品登録</h2>
+    <form method="post" action="{% url 'shop01:admin_item_create' %}">
+        {% csrf_token %}
+        {{ item_form.as_p }}
+        <button class="btn btn-register">登録</button>
+    </form>
+</div>
+
+<!-- 商品一覧 -->
+<div class="form-box">
+<h2>📋 商品一覧</h2>
+
+<table>
+<thead>
+<tr>
+<th>ID</th><th>カテゴリ</th><th>商品名</th>
+<th>価格</th><th>在庫</th><th>おすすめ</th><th></th><th></th>
+</tr>
+</thead>
+
+<tbody>
+{% for item in items %}
+<tr>
+<td>{{ item.item_id }}</td>
+<td>{{ item.category.name }}</td>
+<td>{{ item.name }}</td>
+<td>¥{{ item.price }}</td>
+<td>{{ item.stock }}</td>
+
+<td>
+{% if item.recommend %}
+<span class="badge badge-ok">おすすめ</span>
+{% else %}
+<span class="badge badge-ng">なし</span>
+{% endif %}
+</td>
+
+<td>
+<form method="post" action="{% url 'shop01:admin_item_recommend' item.item_id %}" class="inline-form">
+    {% csrf_token %}
+    <button class="btn btn-recommend">切替</button>
+</form>
+</td>
+
+<td>
+<form method="post" action="{% url 'shop01:admin_item_delete' item.item_id %}" class="inline-form">
+    {% csrf_token %}
+    <button class="btn btn-delete">削除</button>
+</form>
+</td>
+
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<!-- 購入履歴検索 -->
+<div class="form-box">
+<h2>🛒 購入履歴検索</h2>
+
+<form method="get" action="{% url 'shop01:admin_main' %}">
+    {{ purchase_form.as_p }}
+    <button class="btn">検索</button>
+</form>
+
+</div>
+
+<!-- 購入履歴 -->
+<div class="form-box">
+<h2>📦 購入履歴一覧</h2>
+
+<table>
+<thead>
+<tr>
+<th>ID</th><th>会員</th><th>配送先</th>
+<th>日付</th><th>状態</th><th>内容</th><th></th>
+</tr>
+</thead>
+
+<tbody>
+{% for purchase in purchases %}
+<tr>
+
+<td>{{ purchase.purchase_id }}</td>
+<td>{{ purchase.user.user_id }}</td>
+<td>{{ purchase.destination }}</td>
+<td>{{ purchase.booked_date }}</td>
+
+<td>
+{% if purchase.cancel %}
+<span class="badge badge-ng">キャンセル</span>
+{% else %}
+<span class="badge badge-ok">注文中</span>
+{% endif %}
+</td>
+
+<td>
+{% for detail in purchase.shoppingpurchasedetail_set.all %}
+    {{ detail.item.name }} × {{ detail.amount }}<br>
+{% endfor %}
+</td>
+
+<td>
+{% if not purchase.cancel %}
+<form method="post"
+      action="{% url 'shop01:admin_purchase_cancel' purchase.purchase_id %}"
+      class="inline-form"
+      onsubmit="return confirm('本当にキャンセルする？');">
+    {% csrf_token %}
+    <button class="btn btn-delete">キャンセル</button>
+</form>
+{% else %}
+-
+{% endif %}
+</td>
+
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+
+</body>
+</html>

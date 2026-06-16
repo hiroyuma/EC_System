@@ -1,4 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db import transaction
+from shop01.models import AccountUser, ShoppingItem, ShoppingItemincart, ShoppingPurchase, ShoppingPurchasedetail,ShoppingCategory
+from django.views.generic import View, TemplateView
+from shop01.forms import AdminPurchaseSearchForm,UserLoginForm, UserForm, KeywordForm, ItemNumForm, UpdataUserForm, ConfirmUserForm,AdminItemSearchForm, AdminItemForm
 from shop01.models import AccountUser, ShoppingItem, ShoppingItemincart, ShoppingPurchase, ShoppingPurchasedetail, AdministratorAdmin
 from django.views.generic import View, TemplateView
 from shop01.forms import UserLoginForm, UserForm, KeywordForm, ItemNumForm, UpdataUserForm, ConfirmUserForm, AdminLoginForm
@@ -229,22 +233,61 @@ class withdrawCommit(View):
         return render(request, 'withdrawcommit.html', context)
 
 class SearchItem(View):
+
     def get(self, request, *args, **kwargs):
         if not request.session.get('is_login'):
             form = KeywordForm()
+            purchase_form = AdminPurchaseSearchForm()
             context = {
                 'form': form,
-                }
+                'purchase_form': purchase_form,
+                'purchase_list': [],
+            }
             return render(request, 'main.html', context)
-        
         user_id = request.session.get('user_id')
         user_info = AccountUser.objects.filter(user_id=user_id).first()
         form = KeywordForm()
+        purchase_form = AdminPurchaseSearchForm(request.GET or None)
+        purchase_list = ShoppingPurchase.objects.filter(
+            user_id=user_id
+        ).order_by('-purchase_id')
+        if purchase_form.is_valid():
+            purchase_id = purchase_form.cleaned_data.get('purchase_id')
+            show_canceled = purchase_form.cleaned_data.get('show_canceled')
+
+            if purchase_id:
+                purchase_list = purchase_list.filter(purchase_id=purchase_id)
+
+            if not show_canceled:
+                purchase_list = purchase_list.filter(cancel=False)
         context = {
             'form': form,
+            'purchase_form': purchase_form,
+            'purchase_list': purchase_list,
             'user_name': user_info.name
         }
         return render(request, 'main.html', context)
+    def post(self, request, *args, **kwargs):
+        if not request.session.get('is_login'):
+            return redirect('shop01:login')
+        purchase_id = request.POST.get('purchase_id')
+        user_id = request.session.get('user_id')
+        purchase = get_object_or_404(
+            ShoppingPurchase,
+            purchase_id=purchase_id,
+            user_id=user_id
+        )
+        if purchase.cancel:
+            return redirect('shop01:main')
+        with transaction.atomic():
+            details = ShoppingPurchasedetail.objects.filter(purchase=purchase)
+            for detail in details:
+                item = detail.item
+                item.stock += detail.amount
+                item.save()
+            purchase.cancel = True
+            purchase.save()
+        return redirect('shop01:main')
     
 class SearchResult(View):
     def get(self, request, *args, **kwargs):
@@ -362,3 +405,108 @@ class AdminLogin(View):
         return redirect('shop01:admin_main')
 
 
+class AdminMain(View):
+    def get(self, request, *args, **kwargs):
+        search_form = AdminItemSearchForm(request.GET or None)
+        item_form = AdminItemForm()
+        purchase_form = AdminPurchaseSearchForm(request.GET or None)
+
+        items = ShoppingItem.objects.select_related('category').order_by('item_id')
+        purchases = ShoppingPurchase.objects.select_related('user').order_by('-purchase_id')
+        if search_form.is_valid():
+            keyword = search_form.cleaned_data.get('keyword')
+            category = search_form.cleaned_data.get('category')
+            recommend_only = search_form.cleaned_data.get('recommend_only')
+
+            if keyword:
+                items = items.filter(name__icontains=keyword)
+
+            if category:
+                items = items.filter(category=category)
+
+            if recommend_only:
+                items = items.filter(recommend=True)
+        if purchase_form.is_valid():
+            purchase_id = purchase_form.cleaned_data.get('purchase_id')
+            user_id = purchase_form.cleaned_data.get('user_id')
+            cancel_status = purchase_form.cleaned_data.get('cancel_status')
+
+            if purchase_id:
+                purchases = purchases.filter(purchase_id=purchase_id)
+
+            if user_id:
+                purchases = purchases.filter(user_id__icontains=user_id)
+
+            if cancel_status == '0':
+                purchases = purchases.filter(cancel=False)
+            elif cancel_status == '1':
+                purchases = purchases.filter(cancel=True)
+
+        context = {
+            'search_form': search_form,
+            'item_form': item_form,
+            'purchase_form': purchase_form,
+            'items': items,
+            'purchases': purchases,
+        }
+        return render(request, 'admin_main.html', context)
+
+
+class AdminItemCreate(View):
+
+    def post(self, request, *args, **kwargs):
+        search_form = AdminItemSearchForm()
+        item_form = AdminItemForm(request.POST)
+        items = ShoppingItem.objects.select_related('category').order_by('item_id')
+        if not item_form.is_valid():
+            context = {
+                'search_form': search_form,
+                'item_form': item_form,
+                'items': items,
+            }
+            return render(request, 'admin_main.html', context)
+        ShoppingItem.objects.create(
+            item_id=item_form.cleaned_data['item_id'],
+            category=item_form.cleaned_data['category'],
+            name=item_form.cleaned_data['name'],
+            manufacture=item_form.cleaned_data['manufacture'],
+            color=item_form.cleaned_data['color'],
+            price=item_form.cleaned_data['price'],
+            stock=item_form.cleaned_data['stock'],
+            recommend=item_form.cleaned_data['recommend'],
+        )
+        return redirect('shop01:admin_main')
+
+
+class AdminItemDelete(View):
+
+    def post(self, request, item_id, *args, **kwargs):
+        item = get_object_or_404(ShoppingItem, pk=item_id)
+        item.delete()
+        return redirect('shop01:admin_main')
+
+
+class AdminRecommendToggle(View):
+
+    def post(self, request, item_id, *args, **kwargs):
+        item = get_object_or_404(ShoppingItem, pk=item_id)
+        item.recommend = not item.recommend
+        item.save()
+        return redirect('shop01:admin_main')
+
+class AdminPurchaseCancel(View):
+
+    def post(self, request, purchase_id, *args, **kwargs):
+        purchase = get_object_or_404(ShoppingPurchase, pk=purchase_id)
+        if purchase.cancel:
+            return redirect('shop01:admin_main')
+        with transaction.atomic():
+            purchase_details = ShoppingPurchasedetail.objects.filter(purchase=purchase)
+            for detail in purchase_details:
+                item = detail.item
+                item.stock += detail.amount
+                item.save()
+            purchase.cancel = True
+            purchase.save()
+
+        return redirect('shop01:admin_main')

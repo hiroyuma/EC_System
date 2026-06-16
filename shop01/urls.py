@@ -18,6 +18,12 @@ urlpatterns = [
     path('item_detail/<int:item_id>/', views.ItemDetail.as_view(), name='item_detail'),
     path('cart/', views.Cart.as_view(), name='cart'),
     path('main/', views.SearchItem.as_view(), name = 'main'),
+    path('manager/main/', views.AdminMain.as_view(), name='admin_main'),
+    path('manager/item/create/', views.AdminItemCreate.as_view(), name='admin_item_create'),
+    path('manager/item/<int:item_id>/delete/', views.AdminItemDelete.as_view(), name='admin_item_delete'),
+    path('manager/item/<int:item_id>/recommend/', views.AdminRecommendToggle.as_view(), name='admin_item_recommend'),
+    path('manager/main/', views.AdminMain.as_view(), name='admin_main'),
+    path('manager/purchase/<int:purchase_id>/cancel/', views.AdminPurchaseCancel.as_view(), name='admin_purchase_cancel'),
     path("admin_login", views.AdminLogin.as_view(), name = 'admin_login'),
     path('manager/main/', views.AdminMain.as_view(), name='admin_main'),
 ]

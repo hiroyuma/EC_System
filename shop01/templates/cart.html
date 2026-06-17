@@ -20,21 +20,47 @@
             <th>数量</th>
         </tr>
         
-            {% for item in cart_items %}
-        <tr>
-            <td>{{ item.item.name }}</td>
-            <td>{{ item.item.color }}</td>
-            <td>{{ item.item.manufacture}}</td>
-            <td>{{ item.item.price }}円</td>
-            <td>{{item.amount}}<a href="shop01:main">変更</a></td>
-        </tr>
-        {% endfor %}
+            {% for item in cart_items %}    
+            <tr>
+                <td>{{ item.item.name }}</td>
+                <td>{{ item.item.color }}</td>
+                <td>{{ item.item.manufacture}}</td>
+                <td>{{ item.item.price }}円</td>      
+                <td>
+                    <form action="{% url 'shop01:update_cart' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="item_id" value="{{ item.pk }}">
+                        <input type="number"
+                            name="amount"
+                            value="{{ item.amount }}"
+                            min="1"
+                            max="{{item.item.stock}}">
+                        <input type="submit" value="変更">
+                    </form>
+                </td>
+                <td>
+                    <form action="{% url 'shop01:delete_cart' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="item_id" value="{{ item.pk }}">
+                        <input type="submit" value="削除">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
     </table>
     合計 {{total_price}} 円
-    <form action="{% url 'shop01:login' %}" method="GET">
+    <form action="{% url 'shop01:purchase' %}" method="POST">    
+    {% csrf_token %}
+    {% for item in cart_items %}
+        <input type="hidden"
+                name="item_id"
+                value="{{ item.item.item_id }}">
+        <input type="hidden"
+                name="amount"
+                value="{{ item.amount }}">
+        {% endfor %}
         <input type="submit" value="購入する" />
-        </form>
-    </div>
+    </form>
     <br>
     <div>
         <a href="{% url 'shop01:main' %}">商品検索へ</a>

@@ -74,6 +74,15 @@ class ItemNumForm(forms.Form):
         self.label_suffix = ''
         self.fields['stock'].choices = [(i, i) for i in range(1, stock_num + 1)]
 
+class PurchaseForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_suffix = ''
+
+    destination = forms.CharField(label='配送先', max_length=256)
+
+    
+
 
 
         

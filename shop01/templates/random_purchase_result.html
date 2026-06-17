@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ランダム購入 確定</title>
+</head>
+<body style="background-color: #000; color: #fff; text-align: center; font-family: sans-serif; padding-top: 50px;">
+
+    <h1 style="color: #ff0000; font-size: 48px; text-shadow: 2px 2px 0px #fff;">💸 決済完了 💸</h1>
+    <p style="font-size: 20px;">あなたの勇気（無謀さ）に敬意を表し、以下の注文を確定しました。</p>
+
+    <div style="background-color: #222; border: 3px solid #ff00ff; border-radius: 10px; width: 50%; margin: 40px auto; padding: 30px;">
+        <h2 style="color: #00ffff; border-bottom: 1px solid #555; padding-bottom: 10px;">お買い上げ内容</h2>
+        
+        <p style="font-size: 24px; margin-top: 30px;">
+            商品名：<strong style="color: #ffff00; font-size: 32px;">{{ item_name }}</strong>
+        </p>
+        <p style="font-size: 24px;">
+            数量：なんと <strong style="color: #ff6666; font-size: 32px;">{{ amount }} 個</strong>
+        </p>
+        
+        <hr style="border-color: #555; margin: 30px 0;">
+        
+        <p style="font-size: 28px;">
+            ご請求金額：<strong style="color: #ff0000; font-size: 40px;">{{ total_price }} 円</strong>
+        </p>
+        <p style="color: #aaa;">※ {{ destination }} へ向けてただちに発送準備に入ります。</p>
+    </div>
+
+    <p><a href="{% url 'shop01:main' %}" style="color: #00ffff; font-size: 18px;">震えながらメイン画面に戻る</a></p>
+
+</body>
+</html>

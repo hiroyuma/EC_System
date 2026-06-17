@@ -58,6 +58,18 @@
           <span>¥{{ item.item.price|floatformat:"0" }}</span>
         </div>
         {% endfor %}
+
+        <div style="margin-top:12px">
+          <form action="{% url 'shop01:lottery_discount' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit"
+              style="width:100%;padding:10px;border:none;border-radius:var(--r-md);
+                    background:orange;color:#fff;font-weight:700;">
+              🎯 運試し割引やる
+            </button>
+          </form>
+        </div>
+
         <div style="border-top:1px solid var(--ink-200);margin:12px 0;padding-top:12px;display:flex;justify-content:space-between;align-items:center">
           <b>合計</b>
           <span class="tmz-price tmz-price-lg">¥{{ total_price|floatformat:"0" }}</span>

@@ -1,41 +1,30 @@
+{% extends "shop01/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
+{% block title %}会員情報変更 — temuzon{% endblock %}
 
-<head>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-    <title>Login</title>
-    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
-</head>
-<body>
-	<div>
-		<h3>会員情報</h3>
-        <div class="form">
-            <form action="{% url 'shop01:update_user'%}" method='POST'>
-                {% csrf_token %}
-                <table>
-                {% for field in form %}
-                <tr>
-                    <th>{{field.label}}</th>
-                    <td>
-                        {% if field.errors %}
-                    <p class="error">{{field.errors.0}}</p>
-                    {% endif %} 
-                    {{field}}
-                    </td>
-                </tr>
-                    {% endfor %}    
-                    </table>           
-                </div>
-                
-                <input type="submit" value="変更" />
-			</form>
-		</div>
-        <a href="{% url 'shop01:withdrawconfirm' %}">退会する</a>
-        <br>
-        <br>
-        <a href="{% url 'shop01:main' %}">商品検索へ</a>
-	</div>
-</body>
-
-</html>
+{% block content %}
+<div class="tmz-page">
+  <div class="tmz-wrap tmz-sm">
+    <div class="tmz-card">
+      <h2 class="tmz-card-title">会員情報の変更</h2>
+      <form action="{% url 'shop01:update_user' %}" method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="tmz-field">
+          <label class="tmz-lbl">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<p class="tmz-err">{{ field.errors.0 }}</p>{% endif %}
+        </div>
+        {% endfor %}
+        <div class="tmz-actions">
+          <input type="submit" value="変更確認へ" style="border:none;padding:11px 24px;border-radius:var(--r-sm);background:var(--brand);color:#fff;font-family:var(--fb);font-weight:700;font-size:15px;cursor:pointer" />
+          <a href="{% url 'shop01:user_info' %}" class="tmz-btn tmz-btn-s">キャンセル</a>
+        </div>
+      </form>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--ink-100)">
+        <a href="{% url 'shop01:withdrawconfirm' %}" style="font-size:13px;color:var(--ink-400)">退会する</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

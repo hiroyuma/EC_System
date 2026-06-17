@@ -1,23 +1,206 @@
+{% extends "shop01/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
+{% block title %}退会確認 — temuzon{% endblock %}
 
-<head>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-    <title>Login</title>
-    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
-</head>
-<body>
-    <h2>{{user_name}}さん、本当に退会しますか？</h2>
-    <br>
-    <div class="form">
-        <form action="{% url 'shop01:withdrawcommit' %}" method="POST">
-                <input type="submit" value="退会">
-            </div>
+{% block header %}{% endblock %}
+
+{% block content %}
+<style>
+  @keyframes dangerPulse{0%,100%{box-shadow:0 0 0 0 rgba(220,0,0,.9)}70%{box-shadow:0 0 0 24px rgba(220,0,0,0)}}
+  @keyframes bloodDrip{0%{transform:scaleY(0);opacity:0;transform-origin:top}100%{transform:scaleY(1);opacity:1;transform-origin:top}}
+  @keyframes skullBounce{0%,100%{transform:translateY(0) rotate(0)}20%{transform:translateY(-18px) rotate(-8deg)}40%{transform:translateY(-6px) rotate(5deg)}60%{transform:translateY(-12px) rotate(-4deg)}80%{transform:translateY(-3px) rotate(2deg)}}
+  @keyframes warningFlash{0%,100%{background:#1a0000}50%{background:#2d0000}}
+  @keyframes textGlitch{0%,100%{clip-path:none;transform:none;color:#ff3333}15%{clip-path:polygon(0 10%,100% 10%,100% 25%,0 25%);transform:translateX(-5px);color:#ff0000}30%{clip-path:polygon(0 60%,100% 60%,100% 75%,0 75%);transform:translateX(5px);color:#cc0000}50%{clip-path:none;transform:none}}
+  @keyframes countdownShrink{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+  @keyframes redGlow{0%,100%{text-shadow:0 0 8px #f00,0 0 20px #f00}50%{text-shadow:0 0 20px #f00,0 0 60px #cc0000,0 0 100px #990000}}
+  @keyframes scanline{0%{top:-10%}100%{top:110%}}
+  @keyframes shake{0%,100%{transform:none}20%,60%{transform:translateX(-8px) rotate(-1deg)}40%,80%{transform:translateX(8px) rotate(1deg)}}
+  @keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  @keyframes ripple{to{transform:scale(6);opacity:0}}
+  @keyframes slideInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+  @keyframes sparkle{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateY(-36px) scale(0) rotate(180deg)}}
+</style>
+
+<div id="danger-wrap" style="
+  min-height:100vh; background:#0d0000;
+  display:flex; align-items:center; justify-content:center;
+  padding:40px 24px; position:relative; overflow:hidden;
+  animation:warningFlash 2s ease-in-out infinite;
+">
+
+  <!-- Scanline CRT effect -->
+  <div style="position:absolute;left:0;right:0;height:3px;background:rgba(255,0,0,.08);animation:scanline 3s linear infinite;pointer-events:none;z-index:0"></div>
+
+  <!-- Background grid -->
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,0,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,0,0,.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none"></div>
+
+  <!-- Corner warning stripes -->
+  <div style="position:absolute;top:0;left:0;width:120px;height:120px;background:repeating-linear-gradient(45deg,rgba(255,0,0,.15),rgba(255,0,0,.15) 10px,transparent 10px,transparent 20px);pointer-events:none"></div>
+  <div style="position:absolute;top:0;right:0;width:120px;height:120px;background:repeating-linear-gradient(-45deg,rgba(255,0,0,.15),rgba(255,0,0,.15) 10px,transparent 10px,transparent 20px);pointer-events:none"></div>
+  <div style="position:absolute;bottom:0;left:0;width:120px;height:120px;background:repeating-linear-gradient(-45deg,rgba(255,0,0,.15),rgba(255,0,0,.15) 10px,transparent 10px,transparent 20px);pointer-events:none"></div>
+  <div style="position:absolute;bottom:0;right:0;width:120px;height:120px;background:repeating-linear-gradient(45deg,rgba(255,0,0,.15),rgba(255,0,0,.15) 10px,transparent 10px,transparent 20px);pointer-events:none"></div>
+
+  <div style="max-width:520px;width:100%;position:relative;z-index:1;animation:fadeIn .6s both">
+
+    <!-- DANGER ZONE banner -->
+    <div style="
+      background:repeating-linear-gradient(45deg,#cc0000,#cc0000 10px,#990000 10px,#990000 20px);
+      color:#fff;font-weight:900;font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+      text-align:center;padding:10px;border-radius:8px 8px 0 0;
+      text-shadow:0 2px 4px rgba(0,0,0,.5);
+      animation:slideInUp .4s both
+    ">⚠ DANGER ZONE ⚠ 退会 ⚠ DANGER ZONE ⚠ 退会 ⚠ DANGER ZONE ⚠</div>
+
+    <div style="
+      background:#1a0000;border:2px solid #660000;border-top:none;
+      border-radius:0 0 16px 16px;padding:36px 32px 32px;text-align:center;
+    ">
+
+      <!-- Skull -->
+      <div style="font-size:88px;line-height:1;animation:skullBounce 2s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(255,0,0,.8));margin-bottom:6px">💀</div>
+
+      <!-- Blood drip decoration -->
+      <div style="display:flex;justify-content:center;gap:16px;margin-bottom:20px">
+        {%  for i in "12345" %}
+        <div style="width:6px;background:linear-gradient(#cc0000,#660000);border-radius:0 0 6px 6px;animation:bloodDrip .8s {{ forloop.counter|add:'0' }}00ms both;height:{{ forloop.counter|add:'10' }}px;opacity:.8"></div>
+        {% endfor %}
+      </div>
+
+      <h1 style="
+        font-family:var(--fd,'Baloo 2',system-ui);
+        font-size:clamp(22px,4vw,30px);font-weight:900;
+        margin:0 0 8px;line-height:1.2;
+        animation:textGlitch 3s 1s infinite,redGlow 2s ease-in-out infinite;
+        color:#ff3333;
+      ">本当に退会しますか？</h1>
+
+      <p style="color:#cc6666;font-size:15px;font-weight:700;margin:0 0 6px;animation:slideInUp .5s .2s both">
+        {{ user_name }}さんのアカウントは<span style="color:#ff4444;font-weight:900">永久に消去</span>されます
+      </p>
+
+      <!-- Horror checklist -->
+      <div style="
+        background:rgba(255,0,0,.08);border:1px solid rgba(255,0,0,.25);
+        border-radius:10px;padding:16px 20px;margin:20px 0;text-align:left;
+        animation:slideInUp .5s .3s both
+      ">
+        <div style="color:#ff6666;font-weight:700;font-size:13px;margin-bottom:8px">退会すると以下が<span style="color:#ff3333">二度と</span>戻せません：</div>
+        {% for item in "1234" %}
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;color:#cc5555;font-size:13px;animation:slideInUp .4s {{ forloop.counter|add:'3' }}00ms both">
+          <span style="font-size:16px">{% if forloop.first %}🗑️{% elif forloop.counter == 2 %}📜{% elif forloop.counter == 3 %}💳{% else %}😢{% endif %}</span>
+          {% if forloop.first %}アカウント情報{% elif forloop.counter == 2 %}購入履歴・注文データ{% elif forloop.counter == 3 %}保存したお支払い情報{% else %}あなたの思い出のお買い物{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Countdown -->
+      <div id="countdown-msg" style="color:#ff6666;font-size:13px;font-weight:700;margin-bottom:14px;animation:slideInUp .5s .5s both">
+        ⏳ <span id="countdown-num">5</span>秒後にボタンが有効になります…
+      </div>
+      <div style="height:5px;background:rgba(255,255,255,.1);border-radius:5px;overflow:hidden;margin-bottom:24px">
+        <div id="countdown-bar" style="height:100%;background:linear-gradient(90deg,#ff0000,#ff6600);border-radius:5px;width:100%;transform-origin:left;animation:countdownShrink 5s linear both"></div>
+      </div>
+
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="{% url 'shop01:main' %}" style="
+          display:inline-flex;align-items:center;gap:8px;
+          padding:13px 28px;border-radius:10px;
+          background:linear-gradient(135deg,#155724,#0d3d17);
+          color:#4ade80;font-family:var(--fb,Nunito,system-ui);
+          font-weight:800;font-size:15px;text-decoration:none;
+          border:2px solid #166534;
+          box-shadow:0 0 20px rgba(34,197,94,.3);
+          animation:slideInUp .5s .6s both;
+          transition:all .2s
+        "
+        onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 0 30px rgba(34,197,94,.5)'"
+        onmouseout="this.style.transform='';this.style.boxShadow='0 0 20px rgba(34,197,94,.3)'">
+          ✅ やっぱりやめる
+        </a>
+
+        <form action="{% url 'shop01:withdrawcommit' %}" method="POST" style="display:inline">
+          {% csrf_token %}
+          <button id="danger-btn" type="submit" disabled style="
+            padding:13px 28px;border-radius:10px;
+            background:#3d0000;color:#666;
+            font-family:var(--fb,Nunito,system-ui);font-weight:800;font-size:15px;
+            border:2px solid #4d0000;cursor:not-allowed;
+            transition:all .3s;
+            animation:slideInUp .5s .6s both
+          ">💀 退会する</button>
         </form>
-    </div>
-    <br>
-    <a href="{% url 'shop01:main' %}">商品検索へ</a>
-</body>
+      </div>
 
-</html>
+      <p style="color:#663333;font-size:12px;margin-top:20px;animation:slideInUp .5s .7s both">
+        この操作は取り消しできません。本当によろしいですか？
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Countdown 5→0 then enable button
+  let count = 5;
+  const num = document.getElementById('countdown-num');
+  const btn = document.getElementById('danger-btn');
+  const msg = document.getElementById('countdown-msg');
+  const interval = setInterval(() => {
+    count--;
+    if (num) num.textContent = count;
+    if (count <= 0) {
+      clearInterval(interval);
+      if (btn) {
+        btn.disabled = false;
+        btn.style.background = 'linear-gradient(135deg,#990000,#cc0000)';
+        btn.style.color = '#fff';
+        btn.style.cursor = 'pointer';
+        btn.style.borderColor = '#ff0000';
+        btn.style.animation = 'dangerPulse 1.2s infinite';
+        btn.style.boxShadow = '0 0 30px rgba(255,0,0,.5)';
+      }
+      if (msg) msg.innerHTML = '⚠️ ボタンが有効になりました。本当によろしいですか？';
+    }
+  }, 1000);
+
+  // Hover shake on danger button
+  if (btn) {
+    btn.addEventListener('mouseenter', function() {
+      if (!this.disabled) {
+        document.getElementById('danger-wrap').style.animation = 'shake .3s both, warningFlash 2s ease-in-out infinite';
+        // Cursor sparkles (red)
+        for (let i = 0; i < 8; i++) {
+          setTimeout(() => {
+            const sp = document.createElement('span');
+            sp.textContent = ['💀','⚠️','🩸','❌','🔥'][Math.floor(Math.random()*5)];
+            Object.assign(sp.style, {
+              position:'fixed',
+              left:(Math.random()*window.innerWidth)+'px',
+              top:(Math.random()*window.innerHeight)+'px',
+              fontSize:'24px',pointerEvents:'none',zIndex:9999,
+              animation:'sparkle .8s ease-out forwards'
+            });
+            document.body.appendChild(sp);
+            setTimeout(() => sp.remove(), 800);
+          }, i * 80);
+        }
+      }
+    });
+    // Ripple
+    btn.addEventListener('click', function(e) {
+      if (this.disabled) return;
+      const r = this.getBoundingClientRect();
+      const rip = document.createElement('span');
+      Object.assign(rip.style, {
+        position:'absolute',borderRadius:'50%',pointerEvents:'none',
+        width:'100px',height:'100px',background:'rgba(255,0,0,.4)',
+        left:(e.clientX-r.left-50)+'px',top:(e.clientY-r.top-50)+'px',
+        animation:'ripple .6s ease-out forwards'
+      });
+      this.style.position='relative'; this.style.overflow='hidden';
+      this.appendChild(rip);
+    });
+  }
+})();
+</script>
+{% endblock %}

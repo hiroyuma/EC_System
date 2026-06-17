@@ -1,40 +1,26 @@
+{% extends "shop01/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
+{% block title %}会員情報 — temuzon{% endblock %}
 
-<head>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-    <title>Login</title>
-    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
-</head>
-<body>
-	<div>
-		<h3>会員情報</h3>
-        <table>
-            {% for field in form %}
-                {% if field.name != 'password2' %}
-                <tr>
-                    <th>{{ field.label }}</th>
-                    <td>
-                        {% if field.errors %}
-                            <p class="error">{{ field.errors.0 }}</p>
-                        {% endif %}
-                        {% if field.name == "password1" %}
-                            表示なし
-                        {% else %}
-                            {{ field }}
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endif %}
-            {% endfor %}
-            </table> 
-        <a href="{% url 'shop01:update_user' %}">会員情報の変更</a><br>
-        <a href="{% url 'shop01:main' %}">商品検索へ</a>
-	</div>
-    <br>
-<a href="{% url 'shop01:purchase_history' %}">購入履歴を確認する</a>
-</body>
-
-
-</html>
+{% block content %}
+<div class="tmz-page">
+  <div class="tmz-wrap tmz-sm">
+    <div class="tmz-card">
+      <h2 class="tmz-card-title">会員情報</h2>
+      {% for field in form %}
+        {% if field.name != 'password2' %}
+        <div class="tmz-field-row">
+          <span class="tmz-field-key">{{ field.label }}</span>
+          <span>{% if field.name == "password1" %}表示なし{% else %}{{ field.value }}{% endif %}</span>
+        </div>
+        {% endif %}
+      {% endfor %}
+      <div class="tmz-actions" style="margin-top:20px">
+        <a href="{% url 'shop01:update_user' %}" class="tmz-btn tmz-btn-p">会員情報を変更</a>
+        <a href="{% url 'shop01:purchase_history' %}" class="tmz-btn tmz-btn-s">購入履歴</a>
+        <a href="{% url 'shop01:main' %}" class="tmz-btn tmz-btn-s">商品検索へ</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

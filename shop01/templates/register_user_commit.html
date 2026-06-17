@@ -1,20 +1,23 @@
+{% extends "shop01/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
+{% block title %}会員登録完了 — temuzon{% endblock %}
 
-<head>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-    <title>Login</title>
-    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
-</head>
-
-<body>
-	<div>
-		<h3>{{name}}会員登録が完了しました。</h3>
-    </div>
-    <br>
-    <br>
-    <a href="{% url 'shop01:main' %}">商品検索へ</a>
-</body>
-
-</html>
+{% block content %}
+<script>
+(function(){
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  const ctx=new AC();
+  function n(f,t,d,tp,v){const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type=tp||'sine';o.frequency.value=f;g.gain.setValueAtTime(v||.18,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+t+d);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+d+.05);}
+  [[440,.0,.18],[554,.12,.18],[659,.24,.18],[880,.36,.30]].forEach(([f,t,d])=>n(f,t,d,'sine',.48));
+  n(1320,.42,.20,'triangle',.1);
+})();
+</script>
+<div class="tmz-page">
+  <div class="tmz-wrap" style="text-align:center;max-width:480px">
+    <div style="font-size:64px;margin-bottom:16px">🎉</div>
+    <h2 style="font-family:var(--fd);font-size:28px;font-weight:800;margin-bottom:12px">{{ name }}さん、ようこそ！</h2>
+    <p style="color:var(--ink-500);margin-bottom:28px">会員登録が完了しました。さっそくお買い物を始めましょう。</p>
+    <a href="{% url 'shop01:main' %}" class="tmz-btn tmz-btn-p tmz-btn-lg">商品を探す</a>
+  </div>
+</div>
+{% endblock %}

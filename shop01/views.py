@@ -10,10 +10,10 @@ from shop01.forms import UserLoginForm, UserForm, KeywordForm, ItemNumForm, Upda
 
 class Toppage(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'toppage.html')
+        return render(request, 'shop01/toppage.html')
     
     def post(self, request, *args, **kwargs):
-        return render(request, 'toppage.html')
+        return render(request, 'shop01/toppage.html')
 
 class UserLogin(View):
     def get(self, request, *args, **kwargs):

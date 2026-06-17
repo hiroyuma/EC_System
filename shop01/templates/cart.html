@@ -31,7 +31,7 @@
         {% endfor %}
     </table>
     合計 {{total_price}} 円
-    <form action="{% url 'shop01:login' %}" method="GET">
+    <form action="{% url 'shop01:purchase' %}" method="GET">
         <input type="submit" value="購入する" />
         </form>
     </div>

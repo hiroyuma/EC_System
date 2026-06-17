@@ -42,3 +42,37 @@
     <a href="{% url 'shop01:cart' %}">カートに戻る</a>
 </body>
 </html>
+
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+    <title>Login</title>
+    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
+</head>
+
+<body>
+    <h2>ショッピングカートの内の商品一覧</h2>
+    <div>
+    <table border="1">
+        <tr>
+            <th>商品名</th>
+            <th>商品の色</th>
+            <th>メーカー名</th>
+            <th>単価</th>
+            <th>数量</th>
+        </tr>
+        
+            {% for item in cart_items %}    
+            <tr>
+                <td>{{ item.item.name }}</td>
+                <td>{{ item.item.color }}</td>
+                <td>{{ item.item.manufacture}}</td>
+                <td>{{ item.item.price }}円</td>      
+                <td>{{item.amount}}個</td>
+            </tr>
+            {% endfor %}
+    </table>
+    合計 {{total_price}} 円
+    <div>
+        <a href="{% url 'shop01:main' %}">商品検索へ</a>
+    </div>
+</body>

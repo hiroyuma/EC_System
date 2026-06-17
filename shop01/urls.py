@@ -31,4 +31,6 @@ urlpatterns = [
     path('purchase/', views.PurchaseView.as_view(), name='purchase'),
     path('purchase/commit/', views.PurchaseCommitView.as_view(), name='purchase_commit'),
     path('purchase/history/', views.PurchaseHistoryView.as_view(), name='purchase_history'),
+    path('lottery_discount/', views.lottery_discount, name = 'lottery_discount'),
+    path('random_purchase/', views.RandomCartAdd.as_view(), name='random_purchase'),
 ]

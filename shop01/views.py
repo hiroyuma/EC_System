@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import transaction
+from django.db.models import Max
 from shop01.models import AccountUser, ShoppingItem, ShoppingItemincart, ShoppingPurchase, ShoppingPurchasedetail,ShoppingCategory
 from django.views.generic import View, TemplateView
 from shop01.forms import AdminPurchaseSearchForm,UserLoginForm, UserForm, KeywordForm, ItemNumForm, UpdataUserForm, ConfirmUserForm,AdminItemSearchForm, AdminItemForm
 from shop01.models import AccountUser, ShoppingItem, ShoppingItemincart, ShoppingPurchase, ShoppingPurchasedetail, AdministratorAdmin
 from django.views.generic import View, TemplateView
 from shop01.forms import UserLoginForm, UserForm, KeywordForm, ItemNumForm, UpdataUserForm, ConfirmUserForm, AdminLoginForm
+import random
+import datetime
 # Create your views here.
 
 class Toppage(View):
@@ -351,12 +354,25 @@ class Cart(View):
         for item in cart_items:
             total_price += item.amount*item.item.price
 
+        discount = request.session.get('discount', 0)
+        discounted_total = int(total_price*(100 - discount)/ 100)
+
         context = {
             'cart_items':cart_items,
             'total_price':total_price,
+            'discount':discount,
+            'discounted_total':discounted_total
         }
 
         return render(request, 'cart.html', context)
+    
+def lottery_discount(request):
+    if 'discount' in request.session:
+        return redirect('shop01:cart')
+    
+    discount = random.randint(100, -100)
+    request.session['discount'] = discount
+    return redirect('shop01:cart')
     
 from django.utils import timezone
 
@@ -651,3 +667,53 @@ class AdminPurchaseCancel(View):
             purchase.save()
 
         return redirect('shop01:admin_main')
+
+class RandomCartAdd(View):
+    def get(self, request, *args, **kwargs):
+        return redirect("shop01:main")
+
+    def post(self, request, *args, **kwargs):
+        user_id = request.session.get('user_id')
+
+        if not user_id:
+            return redirect("shop01:login")
+        
+        user = AccountUser.objects.filter(user_id=user_id).first()
+
+        random_item = ShoppingItem.objects.filter(stock__gt=0).order_by('?').first()
+        if random_item:
+            randomamount = random.randint(1, random_item.stock)
+
+            
+            max_id = ShoppingPurchase.objects.aggregate(Max('purchase_id'))['purchase_id__max'] or 0
+            
+            new_purchase = ShoppingPurchase.objects.create(
+                purchase_id = max_id + 1,
+                destination = user.address,
+                booked_date = datetime.datetime.now(), 
+                user = user
+            )
+
+            random_item.stock -= randomamount
+            random_item.save()
+
+            max_detail_id = ShoppingPurchasedetail.objects.aggregate(Max('purchase_detail_id'))['purchase_detail_id__max'] or 0
+            ShoppingPurchasedetail.objects.create(
+                purchase_detail_id = max_detail_id + 1,
+                amount = randomamount,
+                item = random_item,
+                purchase = new_purchase
+            )
+            total_price = randomamount * random_item.price
+
+            context = {
+                'item_name': random_item.name,
+                "amount": randomamount,
+                "total_price": total_price,
+                "destination": user.address
+            }
+            
+            return render(request, 'random_purchase_result.html', context)
+        
+        else:
+            return redirect("shop01:main")

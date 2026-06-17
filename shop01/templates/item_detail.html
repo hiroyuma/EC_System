@@ -1,55 +1,142 @@
+{% extends "shop01/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
+{% block title %}{{ item.name }} — temuzon{% endblock %}
 
-<head>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-    <title>Login</title>
-    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
-</head>
+{% block content %}
+<style>
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+@keyframes slideInUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes megaBounce{0%{opacity:0;transform:scale(0) rotate(-10deg)}60%{transform:scale(1.1) rotate(3deg)}100%{opacity:1;transform:none}}
+@keyframes priceReveal{0%{opacity:0;transform:scale(.6) translateY(12px)}60%{transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,90,44,.7)}70%{box-shadow:0 0 0 14px rgba(255,90,44,0)}}
+@keyframes badgePop{0%{transform:scale(1)}30%{transform:scale(1.3)}60%{transform:scale(.9)}100%{transform:scale(1)}}
+@keyframes tabIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+</style>
 
-<body>
-    <h2>商品の詳細</h2>
-    <table border="1">
-        <tr>
-            <th>商品名</th>
-            <td>{{ item.name }}</td>
-        </tr>
-        <tr>
-            <th>商品の色</th>
-            <td>{{ item.color }}</td>
-        </tr>
-        <tr>
-            <th>メーカー名</th>
-            <td>{{ item.manufacture }}</td>
-        </tr>
-        <tr>
-            <th>価格</th>
-            <td>{{ item.price }}円</td>
-        </tr>
-        <tr>
-            <th>在庫数</th>
-            <td>{{ item.stock }}個</td>
-        </tr>
-    </table>
-    {% if request.session.is_login %}
-    <form action="{% url 'shop01:item_detail' item.pk %}" method="POST">
-    {% csrf_token %}
-    <input type="hidden" name="item_id" value="{{ item.pk }}">
-    {{ form.stock.label }}：{{ form.stock }}
-    <br>
-    <input type="submit" value="ショッピングカートに入れる" />
-    </form>
-    {% else %}
-    <form action="{% url 'shop01:login' %}" method="GET">
-        {% csrf_token %}
-        <input type="hidden" name="item_id" value="{{ item.pk }}">
-        {{ form.stock.label }}：{{ form.stock }}
-        <br>
-        <input type="submit" value="ショッピングカートに入れる" />
+<div style="background:#F4EFE9;min-height:100vh">
+
+  <!-- Breadcrumb -->
+  <div class="tmz-wrap" style="padding-top:16px;font-size:13px;color:var(--ink-500);display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <a href="{% url 'shop01:main' %}" style="color:var(--brand);font-weight:700">ホーム</a>
+    <span>›</span>
+    <a href="{% url 'shop01:search_result' %}?category={{ item.category }}" style="color:var(--brand);font-weight:700">{{ item.category }}</a>
+    <span>›</span>
+    <span style="color:var(--ink-700);font-weight:600">{{ item.name }}</span>
+  </div>
+
+  <div class="tmz-wrap tmz-lg" style="padding-top:20px;padding-bottom:48px">
+
+    <!-- Main grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;margin-bottom:40px">
+
+      <!-- LEFT — image -->
+      <div style="animation:megaBounce .6s both">
+        <div style="background:linear-gradient(135deg,#FFF2EC,#FFE4D4);border-radius:24px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:120px;position:relative;box-shadow:0 8px 32px rgba(255,90,44,.15);transition:all .3s" onmouseover="this.style.transform='scale(1.03) rotate(1deg)';this.style.boxShadow='0 24px 60px rgba(255,90,44,.25)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px rgba(255,90,44,.15)'">
+          🛍️
+          <!-- Sale badge -->
+          <div style="position:absolute;top:18px;left:18px;background:linear-gradient(135deg,#FF0000,#FF5A2C);color:#fff;font-weight:900;border-radius:var(--radius-pill,20px);padding:8px 18px;font-size:16px;box-shadow:0 4px 14px rgba(255,0,0,.4);animation:badgePop .5s .3s both">SALE</div>
+          {% if item.recommend %}
+          <div style="position:absolute;top:18px;right:18px;background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;font-weight:900;font-size:13px;padding:6px 14px;border-radius:20px;box-shadow:0 4px 12px rgba(255,165,0,.4)">⭐ おすすめ</div>
+          {% endif %}
+        </div>
+        <!-- Image upload hint -->
+        <div style="text-align:center;margin-top:14px;font-size:13px;color:var(--ink-400);background:#fff;border-radius:12px;padding:10px;border:2px dashed var(--ink-300)">
+          📸 実際の商品画像は管理画面からアップロードできます
+        </div>
+      </div>
+
+      <!-- RIGHT — info -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Category + title -->
+        <div style="animation:slideInRight .5s both">
+          <span style="display:inline-block;background:#FFF2EC;color:var(--brand);font-weight:800;font-size:12px;padding:4px 12px;border-radius:20px;letter-spacing:.04em;margin-bottom:12px">{{ item.category }}</span>
+          <h1 style="font-family:var(--fd);font-size:28px;font-weight:900;color:var(--ink-900);margin:0 0 8px;line-height:1.2">{{ item.name }}</h1>
+          <div style="font-size:13px;color:var(--ink-500)">
+            {% if item.manufacture %}{{ item.manufacture }}{% endif %}
+            {% if item.color %} ・ カラー: {{ item.color }}{% endif %}
+          </div>
+          <!-- Stars (decorative) -->
+          <div style="display:flex;align-items:center;gap:6px;margin-top:10px">
+            <span style="color:#FFB300;font-size:18px;letter-spacing:2px">★★★★★</span>
+            <span style="font-weight:800;font-size:14px;color:var(--ink-900)">4.5</span>
+            <span style="font-size:13px;color:var(--ink-500)">(48件のレビュー)</span>
+          </div>
+        </div>
+
+        <!-- Price box -->
+        <div style="background:linear-gradient(135deg,#FFF2EC,#FFE4D4);border-radius:16px;padding:20px;border:2px solid rgba(255,90,44,.2);animation:priceReveal .6s .15s both">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap">
+            <div style="background:linear-gradient(135deg,#FF0000,#FF5A2C);color:#fff;font-weight:900;border-radius:20px;padding:5px 14px;font-size:15px;box-shadow:0 3px 12px rgba(255,0,0,.4)">XX% OFF</div>
+            <span style="font-size:14px;color:var(--ink-400);text-decoration:line-through;font-weight:700">定価 ¥---</span>
+          </div>
+          <div style="font-family:var(--fd);font-size:42px;font-weight:900;color:var(--brand);line-height:1;margin-bottom:6px">¥{{ item.price|floatformat:"0" }}</div>
+          <div style="font-size:13px;color:#178A4D;font-weight:800">💰 今だけ特別価格！</div>
+        </div>
+
+        <!-- Stock status -->
+        {% if item.stock > 0 %}
+          {% if item.stock <= 5 %}
+          <div style="background:#FFECB3;border-radius:12px;padding:12px 16px;color:#E65100;font-weight:800;display:flex;align-items:center;gap:8px;animation:pulseGlow 1.5s infinite">⚡ 残り{{ item.stock }}個！お急ぎください</div>
+          {% else %}
+          <div style="background:#DCF4E3;border-radius:12px;padding:12px 16px;color:#178A4D;font-weight:800;display:flex;align-items:center;gap:8px">✅ 在庫あり（{{ item.stock }}個）・即日発送対応</div>
+          {% endif %}
+        {% else %}
+        <div style="background:var(--red-100);border-radius:12px;padding:12px 16px;color:var(--red-700);font-weight:800;display:flex;align-items:center;gap:8px">❌ 在庫切れ</div>
+        {% endif %}
+
+        <!-- Add to cart form -->
+        {% if item.stock > 0 %}
+        <form action="{% url 'shop01:item_detail' item.pk %}" method="POST" style="animation:slideInUp .5s .3s both">
+          {% csrf_token %}
+          <input type="hidden" name="item_id" value="{{ item.pk }}" />
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <label style="font-size:13px;font-weight:700;color:var(--ink-700);white-space:nowrap">{{ form.stock.label }}</label>
+            {{ form.stock }}
+          </div>
+          <button type="submit" style="width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,#FF7A4D,#FF5A2C);color:#fff;font-family:var(--fb);font-weight:900;font-size:17px;cursor:pointer;box-shadow:0 8px 24px rgba(255,90,44,.45);animation:pulseGlow 2s 1s infinite;transition:transform .2s" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform=''">🛍️ ショッピングカートに入れる</button>
         </form>
-    {% endif %}
-    <div>
-        <a href="{% url 'shop01:main' %}">商品検索へ</a>
+        {% else %}
+        <button disabled style="width:100%;padding:16px;border-radius:14px;border:none;background:var(--ink-300);color:#fff;font-family:var(--fb);font-weight:800;font-size:17px;cursor:not-allowed">在庫切れ</button>
+        {% endif %}
+
+        {% if not request.session.is_login %}
+        <p style="font-size:13px;color:var(--ink-500);text-align:center;background:#fff;border-radius:10px;padding:10px">
+          カートに入れるには <a href="{% url 'shop01:login' %}" style="font-weight:800">ログイン</a> が必要です
+        </p>
+        {% endif %}
+
+        <!-- Trust badges -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:5px;background:#fff;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--ink-700);border:1px solid var(--ink-200)">🚀 即日発送</div>
+          <div style="display:flex;align-items:center;gap:5px;background:#fff;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--ink-700);border:1px solid var(--ink-200)">🔒 安全決済</div>
+          <div style="display:flex;align-items:center;gap:5px;background:#fff;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--ink-700);border:1px solid var(--ink-200)">↩️ 返品保証</div>
+          <div style="display:flex;align-items:center;gap:5px;background:#fff;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--ink-700);border:1px solid var(--ink-200)">🎁 ギフト包装</div>
+        </div>
+      </div>
     </div>
-</body>
+
+    <!-- Spec table -->
+    <h3 style="font-family:var(--fd);font-size:20px;font-weight:800;margin-bottom:16px">📋 商品仕様</h3>
+    <div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(30,26,23,.07);margin-bottom:32px">
+      {% for row in spec_rows %}
+      <div style="display:grid;grid-template-columns:160px 1fr;border-bottom:1px solid #F4EFE9">
+        <div style="padding:14px 20px;font-weight:800;font-size:14px;color:var(--ink-500);background:#FAF7F3">{{ row.key }}</div>
+        <div style="padding:14px 20px;font-size:14px;color:var(--ink-900);font-weight:600">{{ row.value }}</div>
+      </div>
+      {% empty %}
+      <div style="display:grid;grid-template-columns:160px 1fr;border-bottom:1px solid #F4EFE9"><div style="padding:14px 20px;font-weight:800;font-size:14px;color:var(--ink-500);background:#FAF7F3">商品名</div><div style="padding:14px 20px;font-size:14px;color:var(--ink-900);font-weight:600">{{ item.name }}</div></div>
+      <div style="display:grid;grid-template-columns:160px 1fr;border-bottom:1px solid #F4EFE9"><div style="padding:14px 20px;font-weight:800;font-size:14px;color:var(--ink-500);background:#FAF7F3">カラー</div><div style="padding:14px 20px;font-size:14px;color:var(--ink-900);font-weight:600">{{ item.color }}</div></div>
+      <div style="display:grid;grid-template-columns:160px 1fr;border-bottom:1px solid #F4EFE9"><div style="padding:14px 20px;font-weight:800;font-size:14px;color:var(--ink-500);background:#FAF7F3">メーカー</div><div style="padding:14px 20px;font-size:14px;color:var(--ink-900);font-weight:600">{{ item.manufacture }}</div></div>
+      <div style="display:grid;grid-template-columns:160px 1fr;border-bottom:1px solid #F4EFE9"><div style="padding:14px 20px;font-weight:800;font-size:14px;color:var(--ink-500);background:#FAF7F3">カテゴリ</div><div style="padding:14px 20px;font-size:14px;color:var(--ink-900);font-weight:600">{{ item.category }}</div></div>
+      <div style="display:grid;grid-template-columns:160px 1fr"><div style="padding:14px 20px;font-weight:800;font-size:14px;color:var(--ink-500);background:#FAF7F3">在庫数</div><div style="padding:14px 20px;font-size:14px;color:var(--ink-900);font-weight:600">{{ item.stock }}個</div></div>
+      {% endfor %}
+    </div>
+
+    <!-- Back link -->
+    <a href="{% url 'shop01:main' %}" class="tmz-btn tmz-btn-s">← 商品検索へ戻る</a>
+
+  </div>
+</div>
+{% endblock %}

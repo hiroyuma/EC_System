@@ -1,59 +1,83 @@
+{% extends "shop01/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
+{% block title %}ショッピングカート — temuzon{% endblock %}
 
-<head>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-    <title>Login</title>
-    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
-</head>
+{% block content %}
+<div class="tmz-page">
+  <div class="tmz-wrap tmz-lg">
+    <h2 style="font-family:var(--fd);font-size:26px;font-weight:800;margin-bottom:24px">🛒 ショッピングカート</h2>
 
-<body>
-    <h2>ショッピングカートの内の商品一覧</h2>
-    <div>
-    <table border="1">
-        <tr>
-            <th>商品名</th>
-            <th>商品の色</th>
-            <th>メーカー名</th>
-            <th>単価</th>
-            <th>数量</th>
-        </tr>
-        
-            {% for item in cart_items %}    
+    {% if cart_items %}
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start">
+
+      <div class="tmz-tbl-wrap">
+        <table class="tmz-tbl">
+          <thead>
             <tr>
-                <td>{{ item.item.name }}</td>
-                <td>{{ item.item.color }}</td>
-                <td>{{ item.item.manufacture}}</td>
-                <td>{{ item.item.price }}円</td>      
-                <td>
-                    <form action="{% url 'shop01:update_cart' %}" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="item_id" value="{{ item.pk }}">
-                        <input type="number"
-                            name="amount"
-                            value="{{ item.amount }}"
-                            min="1"
-                            max="{{item.item.stock}}">
-                        <input type="submit" value="変更">
-                    </form>
-                </td>
-                <td>
-                    <form action="{% url 'shop01:delete_cart' %}" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="item_id" value="{{ item.pk }}">
-                        <input type="submit" value="削除">
-                    </form>
-                </td>
+              <th>商品名</th>
+              <th>カラー</th>
+              <th>メーカー</th>
+              <th style="text-align:right">単価</th>
+              <th style="text-align:center">数量</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in cart_items %}
+            <tr>
+              <td style="font-weight:700">{{ item.item.name }}</td>
+              <td style="color:var(--ink-500)">{{ item.item.color }}</td>
+              <td style="color:var(--ink-500)">{{ item.item.manufacture }}</td>
+              <td style="text-align:right"><span class="tmz-price tmz-price-sm">¥{{ item.item.price|floatformat:"0" }}</span></td>
+              <td style="text-align:center">
+                <form action="{% url 'shop01:update_cart' %}" method="POST" class="inline-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="item_id" value="{{ item.pk }}" />
+                  <input type="number" name="amount" value="{{ item.amount }}" min="1" max="{{ item.item.stock }}" style="width:70px;padding:6px 8px;border-radius:var(--r-xs)" />
+                  <input type="submit" value="変更" style="padding:6px 12px;border-radius:var(--r-xs);background:var(--brand);color:#fff;border:none;font-size:13px;cursor:pointer;margin-left:4px" />
+                </form>
+              </td>
+              <td style="text-align:center">
+                <form action="{% url 'shop01:delete_cart' %}" method="POST" class="inline-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="item_id" value="{{ item.pk }}" />
+                  <input type="submit" value="削除" style="padding:6px 12px;border-radius:var(--r-xs);background:var(--red-600);color:#fff;border:none;font-size:13px;cursor:pointer" />
+                </form>
+              </td>
             </tr>
             {% endfor %}
-    </table>
-    合計 {{total_price}} 円
-    <form action="{% url 'shop01:purchase' %}" method="GET">
-        <input type="submit" value="購入する" />
-    </form>
-    <br>
-    <div>
-        <a href="{% url 'shop01:main' %}">商品検索へ</a>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tmz-card">
+        <h3 style="font-family:var(--fd);font-size:18px;font-weight:700;margin-bottom:14px">注文サマリー</h3>
+        {% for item in cart_items %}
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--ink-500);margin-bottom:8px">
+          <span>{{ item.item.name }} × {{ item.amount }}</span>
+          <span>¥{{ item.item.price|floatformat:"0" }}</span>
+        </div>
+        {% endfor %}
+        <div style="border-top:1px solid var(--ink-200);margin:12px 0;padding-top:12px;display:flex;justify-content:space-between;align-items:center">
+          <b>合計</b>
+          <span class="tmz-price tmz-price-lg">¥{{ total_price|floatformat:"0" }}</span>
+        </div>
+        <form action="{% url 'shop01:purchase' %}" method="GET" style="margin-top:4px">
+          <input type="submit" value="購入手続きへ" style="border:none;width:100%;padding:13px;border-radius:var(--r-md);background:var(--brand);color:#fff;font-family:var(--fb);font-weight:700;font-size:16px;cursor:pointer" />
+        </form>
+      </div>
     </div>
-</body>
+
+    {% else %}
+    <div class="tmz-card" style="text-align:center;padding:48px">
+      <p style="font-size:18px;margin-bottom:20px;color:var(--ink-500)">カートに商品がありません</p>
+      <a href="{% url 'shop01:main' %}" class="tmz-btn tmz-btn-p">商品を探す</a>
+    </div>
+    {% endif %}
+
+    <div class="tmz-actions">
+      <a href="{% url 'shop01:main' %}" class="tmz-btn tmz-btn-s">← 商品検索へ</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

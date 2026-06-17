@@ -1,19 +1,25 @@
+{% extends "shop01/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
+{% block title %}退会完了 — temuzon{% endblock %}
 
-<head>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-    <title>Login</title>
-    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
-</head>
-<body>
-    <h2>{{user_name}}さん、退会処理完了しました。</h2>
-    <br>
-    <h2>またのご利用をお待ちしております。</h2>
-    <br>
-    <br>
-    <a href="{% url 'shop01:login' %}">ログイン画面へ</a>
-</body>
+{% block header %}{% endblock %}
 
-</html>
+{% block content %}
+<script>
+(function(){
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  const ctx=new AC();
+  function n(f,t,d,tp,v){const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type=tp||'sine';o.frequency.value=f;g.gain.setValueAtTime(v||.18,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+t+d);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+d+.05);}
+  [[392,.0,.38],[349,.22,.38],[294,.46,.42],[247,.72,.50],[220,.98,.60]].forEach(([f,t,d])=>n(f,t,d,'sine',.48));
+})();
+</script>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--cream);padding:40px 24px">
+  <div style="text-align:center;max-width:440px">
+    <div style="font-size:64px;margin-bottom:16px">👋</div>
+    <h2 style="font-family:var(--fd);font-size:26px;font-weight:800;margin-bottom:12px">{{ user_name }}さん、ご利用ありがとうございました</h2>
+    <p style="color:var(--ink-500);margin-bottom:8px">退会処理が完了しました。</p>
+    <p style="color:var(--ink-500);margin-bottom:28px">またのご利用をお待ちしております。</p>
+    <a href="{% url 'shop01:login' %}" class="tmz-btn tmz-btn-p tmz-btn-lg">ログイン画面へ</a>
+  </div>
+</div>
+{% endblock %}

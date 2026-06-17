@@ -1,38 +1,120 @@
+{% extends "shop01/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
+{% block title %}ログイン — temuzon{% endblock %}
 
-<head>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-    <title>Login</title>
-    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
-</head>
+{% block content %}
+<style>
+@keyframes slideInUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes megaBounce{0%{opacity:0;transform:scale(0) rotate(-10deg)}60%{transform:scale(1.12) rotate(3deg)}100%{opacity:1;transform:none}}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg) scale(1.2)}75%{transform:rotate(12deg) scale(1.2)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,90,44,.7)}70%{box-shadow:0 0 0 14px rgba(255,90,44,0)}}
+@keyframes floatEmoji{0%{transform:translateY(0) rotate(-8deg);opacity:0}15%{opacity:.8}85%{opacity:.4}100%{transform:translateY(-100px) rotate(20deg);opacity:0}}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0)}100%{transform:translateY(110vh) rotate(720deg)}}
+@keyframes welcomePop{0%{opacity:0;transform:scale(.7)}60%{transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
+</style>
 
-<body>
-	<div>
-		<h3>ログインしてください</h3>
-        <div class="form">
-            <form action="{% url 'shop01:login'%}" method='POST'>
-                {% csrf_token %}
-                <table>
-                {% for field in form %}
-                <tr>
-                    <th>{{field.label}}</th>
-                    <td>
-                        {% if field.errors %}
-                    <p class="error">{{field.errors.0}}</p>
-                    {% endif %} 
-                    {{field}}
-                    </td>
-                </tr>
-                    {% endfor %}    
-                    </table>           
-                </div>    
-                <input type="submit" value="ログイン" />
-			</form>
-		</div>
-        <a href="{% url 'shop01:register_user' %}">会員登録</a><br />
-	</div>
-</body>
+<!-- Welcome celebration overlay (shown after login via JS) -->
+<div id="welcome-overlay" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;flex-direction:column">
+  <div id="confetti-wrap" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
+  <div style="text-align:center;padding:0 24px;animation:welcomePop .7s both;position:relative;z-index:1">
+    <div style="font-size:96px;line-height:1;margin-bottom:12px;animation:megaBounce .8s .2s both">🎉</div>
+    <h2 id="welcome-name" style="font-family:var(--fd);font-size:36px;font-weight:900;color:#fff;margin:0 0 10px;text-shadow:0 4px 24px rgba(255,90,44,.8)">ようこそ！</h2>
+    <p style="color:rgba(255,255,255,.85);font-size:20px;font-weight:700;margin:0 0 24px">おかえりなさい 👋</p>
+    <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+      <span style="font-size:28px;animation:floatEmoji 2s 0s infinite ease-in-out">🛍️</span>
+      <span style="font-size:28px;animation:floatEmoji 2.3s 0.15s infinite ease-in-out">✨</span>
+      <span style="font-size:28px;animation:floatEmoji 2.6s 0.3s infinite ease-in-out">🎁</span>
+      <span style="font-size:28px;animation:floatEmoji 2.9s 0.45s infinite ease-in-out">💝</span>
+      <span style="font-size:28px;animation:floatEmoji 3.2s 0.6s infinite ease-in-out">🌟</span>
+      <span style="font-size:28px;animation:floatEmoji 3.5s 0.75s infinite ease-in-out">🎊</span>
+      <span style="font-size:28px;animation:floatEmoji 3.8s 0.9s infinite ease-in-out">💫</span>
+      <span style="font-size:28px;animation:floatEmoji 4.1s 1.05s infinite ease-in-out">⭐</span>
+    </div>
+  </div>
+</div>
 
-</html>
+<div class="tmz-page">
+  <div class="tmz-wrap" style="max-width:460px">
+
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:28px;animation:slideInUp .5s both">
+      <div style="font-size:54px;line-height:1;margin-bottom:10px;animation:wiggle 2s 1.5s infinite">👤</div>
+      <h2 style="font-family:var(--fd);font-size:28px;font-weight:900;margin:0;color:var(--ink-900)">ログイン</h2>
+      <p style="color:var(--ink-500);font-size:14px;margin-top:6px">temuzonへようこそ</p>
+    </div>
+
+    <div class="tmz-card" style="animation:slideInUp .5s .1s both;box-shadow:0 8px 32px rgba(255,90,44,.15);border:2px solid rgba(255,90,44,.15)">
+      <form id="login-form" action="{% url 'shop01:login' %}" method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="tmz-field">
+          <label class="tmz-lbl">
+            {% if forloop.first %}📧 {% else %}🔒 {% endif %}{{ field.label }}
+          </label>
+          {{ field }}
+          {% if field.errors %}<p class="tmz-err">{{ field.errors.0 }}</p>{% endif %}
+        </div>
+        {% endfor %}
+        <div style="margin-top:20px">
+          <button type="submit" id="login-btn" style="width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#FF7A4D,#FF5A2C);color:#fff;font-family:var(--fb);font-weight:900;font-size:16px;cursor:pointer;box-shadow:0 6px 20px rgba(255,90,44,.4);animation:pulseGlow 2.5s 1s infinite;transition:transform .2s" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform=''">🚀 ログイン</button>
+        </div>
+      </form>
+      <div style="text-align:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--ink-200);font-size:14px;color:var(--ink-500)">
+        アカウントをお持ちでない方は <a href="{% url 'shop01:register_user' %}" style="font-weight:800;color:var(--brand)">無料登録 →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Show welcome celebration on successful login redirect
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if just logged in (Django sets session flag)
+  {% if just_logged_in %}
+  showWelcome("{{ user_name }}");
+  {% endif %}
+
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    // Optimistic celebration — will be interrupted if login fails
+    // Just add button feedback
+    const btn = document.getElementById('login-btn');
+    btn.textContent = '⏳ ログイン中…';
+    btn.style.opacity = '.8';
+  });
+});
+
+function showWelcome(name) {
+  const overlay = document.getElementById('welcome-overlay');
+  overlay.style.display = 'flex';
+  document.getElementById('welcome-name').textContent = 'ようこそ！' + (name || '') + 'さん';
+
+  // Confetti
+  const colors = ["#FF5A2C","#FFC02E","#DC1F73","#00A896","#FFD45C","#FF7A4D"];
+  const wrap = document.getElementById('confetti-wrap');
+  for (let i = 0; i < 120; i++) {
+    const p = document.createElement('div');
+    const circle = i % 3 === 0, sz = 7 + Math.random() * 9;
+    Object.assign(p.style, {
+      position:'absolute', left:(Math.random()*100)+'%', top:'-20px',
+      width:sz+'px', height:circle?sz+'px':(sz*1.8)+'px',
+      borderRadius:circle?'50%':'3px',
+      background:colors[Math.floor(Math.random()*colors.length)],
+      animation:`confettiFall ${1.6+Math.random()*2}s ${Math.random()*2.5}s ease-in both`,
+      transform:`rotate(${Math.random()*360}deg)`
+    });
+    wrap.appendChild(p);
+  }
+  // Launch fireworks via base.html helper if available
+  if (window.launchFireworks) { window.launchFireworks(8); setTimeout(()=>window.launchFireworks(6), 1200); }
+
+  // Auto close
+  setTimeout(() => { overlay.style.display = 'none'; }, 4000);
+}
+
+// Call if template var is true
+{% if just_logged_in %}
+setTimeout(() => showWelcome("{{ user_name }}"), 200);
+{% endif %}
+</script>
+{% endblock %}

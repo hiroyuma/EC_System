@@ -1,38 +1,175 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
-
+<html lang="ja">
 <head>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-    <title>AdminLogin</title>
-    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
+<meta charset="UTF-8">
+<title>管理者ログイン</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+    --orange: #ff5a1f;
+    --orange2: #ff7a1a;
+    --bg: #f7f7f7;
+    --card: #ffffff;
+    --text: #222;
+    --sub: #777;
+    --danger: #ff4d4f;
+}
+
+/* ===== 全体 ===== */
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: "Segoe UI", "Yu Gothic UI", sans-serif;
+    background: linear-gradient(to bottom, #fff3ec, #f7f7f7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== カード ===== */
+.login-card {
+    width: 380px;
+    background: var(--card);
+    border-radius: 24px;
+    padding: 40px 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* ===== タイトル ===== */
+.title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--orange);
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--sub);
+    margin-bottom: 26px;
+    font-size: 13px;
+}
+
+/* ===== フォーム ===== */
+.form-group {
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    text-align: left;
+}
+
+/* ★ズレ修正の核心 */
+.form-group input {
+    width: 100%;
+    display: block;
+    margin: 0;
+    padding: 14px;
+    border-radius: 14px;
+    border: 2px solid #ffe0d5;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* focus */
+.form-group input:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 3px rgba(255,90,31,0.2);
+    outline: none;
+}
+
+/* エラー */
+.error {
+    color: var(--danger);
+    font-size: 12px;
+    margin-bottom: 6px;
+    text-align: left;
+}
+
+/* ボタン */
+.btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, var(--orange), var(--orange2));
+    color: white;
+    font-weight: 900;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* フッター */
+.footer {
+    margin-top: 18px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.footer a {
+    color: var(--orange);
+    font-weight: bold;
+}
+</style>
 </head>
 
-<body>
-	<div>
-		<h3>ログインしてください</h3>
-        <div class="form">
-            <form action="{% url 'shop01:admin_login'%}" method='POST'>
-                {% csrf_token %}
-                <table>
-                {% for field in form %}
-                <tr>
-                    <th>{{field.label}}</th>
-                    <td>
-                        {% if field.errors %}
-                    <p class="error">{{field.errors.0}}</p>
-                    {% endif %} 
-                    {{field}}
-                    </td>
-                </tr>
-                    {% endfor %}    
-                    </table>           
-                </div>
-                
-                <input type="submit" value="ログイン" />
-			</form>
-		</div>
-	</div>
-</body>
 
+<body>
+
+<div class="login-card">
+
+    <div class="title">🔐 管理者ログイン</div>
+    <div class="subtitle">管理画面にアクセス</div>
+
+    <form method="post" action="{% url 'shop01:admin_login' %}">
+        {% csrf_token %}
+
+        <!-- 管理者ID -->
+        <div class="form-group">
+            <label>管理者ID</label>
+
+            {% if form.admin_id.errors %}
+                <div class="error">{{ form.admin_id.errors.0 }}</div>
+            {% endif %}
+
+            {{ form.admin_id }}
+        </div>
+
+        <!-- パスワード -->
+        <div class="form-group">
+            <label>パスワード</label>
+
+            {% if form.password.errors %}
+                <div class="error">{{ form.password.errors.0 }}</div>
+            {% endif %}
+
+            {{ form.password }}
+        </div>
+
+        <button type="submit" class="btn">
+            ログイン
+        </button>
+
+    </form>
+
+    <div class="footer">
+        <a href="{% url 'shop01:toppage' %}">トップに戻る</a>
+    </div>
+
+</div>
+
+</body>
 </html>

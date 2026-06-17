@@ -1,11 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import transaction
-from shop01.models import AccountUser, ShoppingItem, ShoppingItemincart, ShoppingPurchase, ShoppingPurchasedetail,ShoppingCategory
+from shop01.models import AccountUser, ShoppingItem, ShoppingItemincart, ShoppingPurchase, ShoppingPurchasedetail,ShoppingCategory,AdministratorAdmin
 from django.views.generic import View, TemplateView
-from shop01.forms import AdminPurchaseSearchForm,UserLoginForm, UserForm, KeywordForm, ItemNumForm, UpdataUserForm, ConfirmUserForm,AdminItemSearchForm, AdminItemForm
-from shop01.models import AccountUser, ShoppingItem, ShoppingItemincart, ShoppingPurchase, ShoppingPurchasedetail, AdministratorAdmin
-from django.views.generic import View, TemplateView
-from shop01.forms import UserLoginForm, UserForm, KeywordForm, ItemNumForm, UpdataUserForm, ConfirmUserForm, AdminLoginForm
+from shop01.forms import AdminLoginForm,AdminPurchaseSearchForm,UserLoginForm, UserForm, KeywordForm, ItemNumForm, UpdataUserForm, ConfirmUserForm,AdminItemSearchForm, AdminItemForm
+
 # Create your views here.
 
 class Toppage(View):
@@ -235,19 +233,15 @@ class withdrawCommit(View):
 class SearchItem(View):
 
     def get(self, request, *args, **kwargs):
-        if not request.session.get('is_login'):
-            form = KeywordForm()
-            purchase_form = AdminPurchaseSearchForm()
-            context = {
-                'form': form,
-                'purchase_form': purchase_form,
-                'purchase_list': [],
-            }
-            return render(request, 'main.html', context)
+
         user_id = request.session.get('user_id')
-        user_info = AccountUser.objects.filter(user_id=user_id).first()
+        if not user_id:
+            return redirect('shop01:login')
+        user_info = get_object_or_404(AccountUser, user_id=user_id)
+
         form = KeywordForm()
         purchase_form = AdminPurchaseSearchForm(request.GET or None)
+
         purchase_list = ShoppingPurchase.objects.filter(
             user_id=user_id
         ).order_by('-purchase_id')
@@ -266,12 +260,17 @@ class SearchItem(View):
             'purchase_list': purchase_list,
             'user_name': user_info.name
         }
+
         return render(request, 'main.html', context)
+
     def post(self, request, *args, **kwargs):
-        if not request.session.get('is_login'):
-            return redirect('shop01:login')
-        purchase_id = request.POST.get('purchase_id')
+
         user_id = request.session.get('user_id')
+        if not user_id:
+            return redirect('shop01:login')
+
+        purchase_id = request.POST.get('purchase_id')
+
         purchase = get_object_or_404(
             ShoppingPurchase,
             purchase_id=purchase_id,
@@ -281,12 +280,15 @@ class SearchItem(View):
             return redirect('shop01:main')
         with transaction.atomic():
             details = ShoppingPurchasedetail.objects.filter(purchase=purchase)
+
             for detail in details:
                 item = detail.item
                 item.stock += detail.amount
                 item.save()
+
             purchase.cancel = True
             purchase.save()
+
         return redirect('shop01:main')
     
 class SearchResult(View):
@@ -386,7 +388,7 @@ class AdminLogin(View):
         password = form.cleaned_data.get('password')
         
         
-        print("admin_id:", admin_id)   # ←⑤ここ
+        print("admin_id:", admin_id)
         print("password:", password)
 
 

@@ -62,19 +62,42 @@
         <a href="{% url 'shop01:admin_login' %}">管理者ページ</a><br>
     </div>
     {% endif %}
-    <!--<script>
-        var isLogin = '{{ request.session.is_login }}';
-        if(isLogin === 'True'){
-            document.getElementById('infoDiv').style.display = 'block';
-            document.getElementById('loginBtnDiv').style.display = 'none';
-        }
-        else{
-            document.getElementById('loginBtnDiv').style.display = 'block';
-            document.getElementById('infoDiv').style.display = 'none';
-        }
+    <hr style="margin: 30px 0;">
 
-    </script>-->
-
-</body>
+    <div class="recommend-section" style="background-color: #f9f9f9; padding: 15px; border: 1px solid #ccc;">
+        <h3 style="color: #ff6600; margin-top: 0;">👑 ピックアップオススメ商品</h3>
+        
+        {% if recommended_items %}
+            <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
+                <tr style="background-color: #eeeeee;">
+                    <th style="padding: 5px;">商品名</th>
+                    <th style="padding: 5px;">メーカー</th>
+                    <th style="padding: 5px;">価格</th>
+                    <th style="padding: 5px;">在庫</th>
+                    <th style="padding: 5px;"></th>
+                </tr>
+                {% for item in recommended_items %}
+                <tr>
+                    <td style="padding: 5px;">{{ item.name }}</td>
+                    <td style="padding: 5px;">{{ item.manufacture }}</td>
+                    <td style="padding: 5px;">{{ item.price }}円</td>
+                    <td style="padding: 5px;">
+                        {% if item.stock > 0 %}
+                            あり
+                        {% else %}
+                            <span style="color: red;">売り切れ</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 5px;">
+                        <a href="{% url 'shop01:item_detail' item.item_id %}">詳細を見る</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>現在ピックアップ中のオススメ商品はありません。</p>
+        {% endif %}
+    </div>
+    </body>
 
 </html>

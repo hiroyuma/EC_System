@@ -233,15 +233,19 @@ class withdrawCommit(View):
 class SearchItem(View):
 
     def get(self, request, *args, **kwargs):
+        recommended_items = ShoppingItem.objects.filter(recommend=True)
         if not request.session.get('is_login'):
+            recommended_items = ShoppingItem.objects.filter(recommend=True)
             form = KeywordForm()
             purchase_form = AdminPurchaseSearchForm()
             context = {
                 'form': form,
                 'purchase_form': purchase_form,
                 'purchase_list': [],
+                'recommended_items':recommended_items,
             }
             return render(request, 'main.html', context)
+        
         user_id = request.session.get('user_id')
         user_info = AccountUser.objects.filter(user_id=user_id).first()
         form = KeywordForm()
@@ -262,7 +266,8 @@ class SearchItem(View):
             'form': form,
             'purchase_form': purchase_form,
             'purchase_list': purchase_list,
-            'user_name': user_info.name
+            'user_name': user_info.name,
+            'recommended_items':recommended_items,
         }
         return render(request, 'main.html', context)
     def post(self, request, *args, **kwargs):

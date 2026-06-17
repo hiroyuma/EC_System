@@ -100,10 +100,8 @@ class UserConfirm(View):
         new_user_data.password = form.cleaned_data.get('password2')
         new_user_data.name = form.cleaned_data.get('name')
         new_user_data.address = form.cleaned_data.get('address')
-
-
-        
         if AccountUser.objects.filter(user_id=new_user_data.user_id).exists():
+            form = UserForm(request.POST)
             form.add_error('user_id', 'この会員IDは既に登録済みです')
             return render(request, 'register_user.html', {
                 'form': form,
@@ -356,10 +354,8 @@ class Cart(View):
         return render(request, 'cart.html', context)
     
 from django.utils import timezone
-# すでに import されているものは省略し、既存クラスの下に追加してください
 
 class PurchaseView(View):
-    """購入確認・配送先入力画面"""
     def get(self, request, *args, **kwargs):
         user_id = request.session.get('user_id')
         if not user_id:
@@ -382,7 +378,6 @@ class PurchaseView(View):
 
 
 class PurchaseCommitView(View):
-    """購入処理の実行（DBへの登録）"""
     def post(self, request, *args, **kwargs):
         user_id = request.session.get('user_id')
         user_info = AccountUser.objects.filter(user_id=user_id).first()
@@ -390,7 +385,6 @@ class PurchaseCommitView(View):
         if not user_info:
             return redirect('shop01:login')
 
-        # 送信された配送先を取得（空の場合は会員登録されている住所を使用）
         custom_address = request.POST.get('destination')
         destination = custom_address if custom_address else user_info.address
 
@@ -399,11 +393,9 @@ class PurchaseCommitView(View):
             return redirect('shop01:cart')
 
         with transaction.atomic():
-            # purchase_idの自動採番 (AutoFieldではないための手動計算)
             last_purchase = ShoppingPurchase.objects.order_by('-purchase_id').first()
             new_purchase_id = (last_purchase.purchase_id + 1) if last_purchase else 1
 
-            # 注文レコードの作成
             purchase = ShoppingPurchase.objects.create(
                 purchase_id=new_purchase_id,
                 destination=destination,
@@ -412,12 +404,10 @@ class PurchaseCommitView(View):
                 user=user_info
             )
 
-            # purchase_detail_idの自動採番用
             last_detail = ShoppingPurchasedetail.objects.order_by('-purchase_detail_id').first()
             detail_id_counter = (last_detail.purchase_detail_id + 1) if last_detail else 1
 
             for cart_item in cart_items:
-                # 注文詳細レコードの作成
                 ShoppingPurchasedetail.objects.create(
                     purchase_detail_id=detail_id_counter,
                     amount=cart_item.amount,
@@ -428,7 +418,6 @@ class PurchaseCommitView(View):
                 cart_item.item.stock -= cart_item.amount
                 cart_item.item.save()
 
-            # 処理が完了したらカートを空にする
             cart_items.delete()
 
         return render(request, 'purchase_complete.html')
@@ -441,7 +430,6 @@ class PurchaseHistoryView(View):
         if not user_id:
             return redirect('shop01:login')
             
-        # ユーザーの注文履歴を取得（N+1問題対策で関連テーブルも取得）
         purchases = ShoppingPurchase.objects.filter(user_id=user_id).prefetch_related(
             'shoppingpurchasedetail_set__item'
         ).order_by('-booked_date')
@@ -534,7 +522,7 @@ class AdminLogin(View):
         password = form.cleaned_data.get('password')
         
         
-        print("admin_id:", admin_id)   # ←⑤ここ
+        print("admin_id:", admin_id) 
         print("password:", password)
 
 

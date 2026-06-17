@@ -64,7 +64,7 @@ class KeywordForm(forms.Form):
         self.label_suffix = ''
         
     category = forms.ModelChoiceField(ShoppingCategory.objects.order_by('category_id'), label='カテゴリ', to_field_name='category_id', empty_label='すべて', required=False,)
-    item_keyword = forms.CharField(label='キーワード', max_length=128)
+    item_keyword = forms.CharField(label='キーワード', max_length=128 , required = False,)
 
 class ItemNumForm(forms.Form):
 

@@ -29,4 +29,7 @@ urlpatterns = [
     path('manager/purchase/<int:purchase_id>/cancel/', views.AdminPurchaseCancel.as_view(), name='admin_purchase_cancel'),
     path("admin_login", views.AdminLogin.as_view(), name = 'admin_login'),
     path('manager/main/', views.AdminMain.as_view(), name='admin_main'),
+    path('purchase/', views.PurchaseView.as_view(), name='purchase'),
+    path('purchase/commit/', views.PurchaseCommitView.as_view(), name='purchase_commit'),
+    path('purchase/history/', views.PurchaseHistoryView.as_view(), name='purchase_history'),
 ]

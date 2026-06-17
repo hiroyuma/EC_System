@@ -49,16 +49,7 @@
             {% endfor %}
     </table>
     合計 {{total_price}} 円
-    <form action="{% url 'shop01:purchase' %}" method="POST">    
-    {% csrf_token %}
-    {% for item in cart_items %}
-        <input type="hidden"
-                name="item_id"
-                value="{{ item.item.item_id }}">
-        <input type="hidden"
-                name="amount"
-                value="{{ item.amount }}">
-        {% endfor %}
+    <form action="{% url 'shop01:purchase' %}" method="GET">
         <input type="submit" value="購入する" />
     </form>
     <br>

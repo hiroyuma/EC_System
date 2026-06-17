@@ -1,0 +1,15 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+    <title>購入完了</title>
+    <link rel='stylesheet' type='text/css' href='{% static "shop01/css/style.css" %}' />
+</head>
+<body>
+    <h2>ご注文ありがとうございました</h2>
+    <p>購入処理が完了しました。</p>
+    <br>
+    <a href="{% url 'shop01:main' %}">トップページへ戻る</a>
+</body>
+</html>

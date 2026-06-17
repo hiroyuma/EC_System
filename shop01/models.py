@@ -13,7 +13,7 @@ class AccountUser(models.Model):
 
 class ShoppingCategory(models.Model):
     class Meta:
-        db_table = 'shoppint_category'
+        db_table = 'shopping_category'
 
     category_id = models.IntegerField(verbose_name='カテゴリID', primary_key=True)
     name = models.CharField(verbose_name='カテゴリ名', max_length=256)
@@ -24,7 +24,7 @@ class ShoppingCategory(models.Model):
 
 class ShoppingItem(models.Model):
     class Meta:
-        db_table = 'shoppint_item'
+        db_table = 'shopping_item'
 
     category = models.ForeignKey(ShoppingCategory, verbose_name='カテゴリID', on_delete=models.CASCADE)
 

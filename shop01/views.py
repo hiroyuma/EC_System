@@ -330,7 +330,6 @@ class ItemDetail(View):
 
         item = get_object_or_404(ShoppingItem, pk=item_id)
         user = get_object_or_404(AccountUser, pk=user_id)
-        
         cart_item = ShoppingItemincart()
         cart_item.amount = stock
         cart_item.item = item
@@ -339,8 +338,6 @@ class ItemDetail(View):
         cart_item.save()
 
         return redirect('shop01:cart')
-
-
 
 class Cart(View):
     def get(self, request, *args, **kwargs):
@@ -357,6 +354,61 @@ class Cart(View):
         }
 
         return render(request, 'cart.html', context)
+
+class UpdateCart(View):
+    def post(self, request, *args, **kwargs):
+        item_id = request.POST.get('item_id')
+        new_amount = request.POST.get('amount')
+
+        items = ShoppingItemincart.objects.get(pk=item_id)
+
+        items.amount = new_amount
+        items.save()
+
+        return redirect('shop01:cart')
+    
+class DeleteCart(View):
+    def post(self, request, *args, **kwargs):
+        item_id = request.POST.get('item_id')
+
+        items = ShoppingItemincart.objects.get(pk=item_id)
+        items.delete()
+
+        return redirect('shop01:cart')
+    
+class Purchase(View):
+    def get(self, request, *args, **kwargs):
+        return redirect('shop01:cart')
+
+    def post(self, request, *args, **kwargs):
+        user_id = request.session.get('user_id')
+        amounts = request.POST.getlist('amount')
+        item_ids = request.POST.getlist('item_id')
+        cart_items = ShoppingItemincart.objects.filter(user_id=user_id)
+
+        user = AccountUser.objects.filter(user_id=user_id).first()
+
+        for item_id, amount in zip(item_ids, amounts):
+            item = ShoppingItem.objects.filter(item_id=item_id).first()
+            if item.stock > 0:
+                item.stock = int(item.stock) - int(amount)
+            else:
+                item.stock = 0
+            item.save()
+        
+        total_price = 0
+        for item in cart_items:
+            total_price += item.amount*item.item.price
+
+        context = {
+            'cart_items':cart_items,
+            'total_price':total_price,
+        }
+
+        return render(request, 'purchase.html', context)
+
+    
+        
 
 class AdminLogin(View):
     def get(self, request, *args, **kwargs):

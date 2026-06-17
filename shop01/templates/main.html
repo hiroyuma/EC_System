@@ -4,34 +4,79 @@
 
 {% block content %}
 <style>
-@keyframes slideInLeft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
+@keyframes bannerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  #banner-track-wrap:hover > div{animation-play-state:paused}
 @keyframes slideInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-@keyframes cardPop{0%{opacity:0;transform:translateY(24px) scale(.9)}70%{transform:translateY(-3px) scale(1.02)}100%{opacity:1;transform:none}}
-@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
-@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,90,44,.7)}70%{box-shadow:0 0 0 12px rgba(255,90,44,0)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,90,44,.7)}70%{box-shadow:0 0 0 14px rgba(255,90,44,0)}}
 </style>
 
-<div style="background:linear-gradient(135deg,#1E1A17 0%,#2E2420 60%,#FF5A2C 220%);padding:36px 24px 28px;position:relative;overflow:hidden">
-    <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 80% 50%,rgba(255,90,44,.25) 0%,transparent 60%);pointer-events:none"></div>
-    <div class="tmz-wrap" style="position:relative;z-index:1">
-        <h2 style="font-family:var(--fd);font-size:32px;font-weight:900;color:#fff;margin:0 0 22px;animation:slideInLeft .4s both">🔍 商品を探す</h2>
-        <form action="{% url 'shop01:search_result' %}" method="GET">
-            <div style="display:flex;max-width:720px;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.3);animation:slideInUp .4s .1s both">
-                {% for field in form %}
-                    {{ field }}
-                {% endfor %}
-                <input type="submit" value="検索" style="padding:0 28px;background:linear-gradient(135deg,#FF7A4D,#FF5A2C);color:#fff;border:none;font-family:var(--fb);font-weight:900;font-size:16px;cursor:pointer;white-space:nowrap;flex-shrink:0" />
-            </div>
-        </form>
-        <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;animation:slideInUp .4s .2s both">
-            <a href="{% url 'shop01:search_result' %}?keyword=&category=すべて" style="padding:6px 16px;border-radius:20px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.8);font-weight:700;font-size:13px;text-decoration:none;transition:all .2s">すべて</a>
-            {% for cat in categories %}
-            <a href="{% url 'shop01:search_result' %}?keyword=&category={{ cat }}" style="padding:6px 16px;border-radius:20px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.75);font-weight:700;font-size:13px;text-decoration:none;transition:all .2s">{{ cat }}</a>
-            {% endfor %}
+<!-- ===== BANNER SECTION ===== -->
+<div style="background:linear-gradient(135deg,#1E1A17 0%,#2a1205 100%);padding:32px 0 24px;overflow:hidden">
+  <!-- Label -->
+  <div style="text-align:center;margin-bottom:20px">
+    <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);border-radius:40px;padding:8px 22px;font-family:var(--fd);font-size:16px;font-weight:900;color:#fff">
+      ⭐ おすすめ商品
+      <span style="font-size:13px;color:rgba(255,255,255,.4);font-weight:600">— スクロールして見る</span>
+    </span>
+  </div>
+
+  <!-- Scrolling banner -->
+  <div id="banner-track-wrap" style="position:relative;overflow:hidden;width:100%">
+    <!-- Left/right fade masks -->
+    <div style="position:absolute;left:0;top:0;bottom:0;width:80px;background:linear-gradient(90deg,#1E1A17,transparent);z-index:2;pointer-events:none"></div>
+    <div style="position:absolute;right:0;top:0;bottom:0;width:80px;background:linear-gradient(270deg,#1E1A17,transparent);z-index:2;pointer-events:none"></div>
+
+    <div style="display:flex;animation:bannerScroll 32s linear infinite">
+
+      <!-- DB商品のみ表示（2周でシームレスループ） -->
+      {% for item in recommended_items %}
+      <a href="{% url 'shop01:item_detail' item.item_id %}" style="flex-shrink:0;width:200px;margin:0 10px;border-radius:18px;overflow:hidden;background:#fff;text-decoration:none;display:block;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 16px 40px rgba(255,90,44,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(0,0,0,.4)'">
+        <div style="height:110px;background:linear-gradient(135deg,#FFF2EC,#FFD4B0);display:flex;align-items:center;justify-content:center;font-size:52px;position:relative">
+          🛍️
+          <div style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#CC0000,#FF5A2C);color:#fff;font-weight:900;font-size:11px;padding:3px 9px;border-radius:20px">SALE</div>
+          {% if item.recommend %}<div style="position:absolute;top:8px;right:8px;background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;font-weight:900;font-size:10px;padding:3px 8px;border-radius:20px">⭐TOP</div>{% endif %}
         </div>
+        <div style="padding:10px 13px 13px">
+          <div style="font-weight:800;font-size:13px;color:#1E1A17;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ item.name }}</div>
+          <div style="font-size:11px;color:#A89E94;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ item.manufacture }}</div>
+          <div style="font-family:var(--fd);font-weight:900;font-size:18px;color:#FF5A2C">¥{{ item.price|floatformat:"0" }}</div>
+        </div>
+      </a>
+      {% endfor %}
+      <!-- 2周目（シームレスループ用） -->
+      {% for item in recommended_items %}
+      <a href="{% url 'shop01:item_detail' item.item_id %}" style="flex-shrink:0;width:200px;margin:0 10px;border-radius:18px;overflow:hidden;background:#fff;text-decoration:none;display:block;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 16px 40px rgba(255,90,44,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(0,0,0,.4)'">
+        <div style="height:110px;background:linear-gradient(135deg,#FFF2EC,#FFD4B0);display:flex;align-items:center;justify-content:center;font-size:52px;position:relative">
+          🛍️
+          <div style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#CC0000,#FF5A2C);color:#fff;font-weight:900;font-size:11px;padding:3px 9px;border-radius:20px">SALE</div>
+        </div>
+        <div style="padding:10px 13px 13px">
+          <div style="font-weight:800;font-size:13px;color:#1E1A17;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ item.name }}</div>
+          <div style="font-size:11px;color:#A89E94;margin-bottom:4px">{{ item.manufacture }}</div>
+          <div style="font-family:var(--fd);font-weight:900;font-size:18px;color:#FF5A2C">¥{{ item.price|floatformat:"0" }}</div>
+        </div>
+      </a>
+      {% endfor %}
+
     </div>
+  </div>
+
+
 </div>
 
+<!-- ===== SEARCH SECTION ===== -->
+<div style="background:linear-gradient(180deg,#2a1205 0%,#FF5A2C 100%);padding:0 24px">
+  <div style="max-width:1100px;margin:0 auto;padding:32px 0 28px">
+    <h2 style="font-family:var(--fd);font-size:26px;font-weight:900;color:#fff;margin:0 0 18px;animation:slideInUp .4s both">🔍 商品を探す</h2>
+    <form action="{% url 'shop01:search_result' %}" method="GET">
+      {% csrf_token %}
+      <div style="display:flex;max-width:720px;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.35);animation:slideInUp .4s .1s both">
+        {% for field in form %}{{ field }}{% endfor %}
+        <input type="submit" value="検索" style="padding:0 28px;background:linear-gradient(135deg,#FF7A4D,#ED4715);color:#fff;border:none;font-family:var(--fb);font-weight:900;font-size:16px;cursor:pointer;white-space:nowrap;flex-shrink:0">
+      </div>
+    </form>
+
+  </div>
 <div class="tmz-wrap" style="padding-top:22px">
     {% if request.session.is_login %}
     <div class="tmz-links" style="animation:slideInUp .4s .3s both">
@@ -58,41 +103,22 @@
     {% endif %}
 </div>
 
-<hr style="margin: 30px 0;">
-
-<div class="recommend-section" style="background-color: #f9f9f9; padding: 15px; border: 1px solid #ccc;">
-    <h3 style="color: #ff6600; margin-top: 0;">👑 ピックアップオススメ商品</h3>
-    
-    {% if recommended_items %}
-        <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
-            <tr style="background-color: #eeeeee;">
-                <th style="padding: 5px;">商品名</th>
-                <th style="padding: 5px;">メーカー</th>
-                <th style="padding: 5px;">価格</th>
-                <th style="padding: 5px;">在庫</th>
-                <th style="padding: 5px;"></th>
-            </tr>
-            {% for item in recommended_items %}
-            <tr>
-                <td style="padding: 5px;">{{ item.name }}</td>
-                <td style="padding: 5px;">{{ item.manufacture }}</td>
-                <td style="padding: 5px;">{{ item.price }}円</td>
-                <td style="padding: 5px;">
-                    {% if item.stock > 0 %}
-                        あり
-                    {% else %}
-                        <span style="color: red;">売り切れ</span>
-                    {% endif %}
-                </td>
-                <td style="padding: 5px;">
-                    <a href="{% url 'shop01:item_detail' item.item_id %}">詳細を見る</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>現在ピックアップ中のオススメ商品はありません。</p>
-    {% endif %}
+<!-- Nav links -->
+<div class="tmz-wrap" style="padding-top:20px;padding-bottom:12px">
+  {% if request.session.is_login %}
+  <div class="tmz-links">
+    <a href="{% url 'shop01:cart' %}">🛒 カート</a>
+    <a href="{% url 'shop01:user_info' %}">会員情報</a>
+    <a href="{% url 'shop01:purchase_history' %}">購入履歴</a>
+    <a href="{% url 'shop01:logout' %}" style="color:var(--ink-500)">ログアウト</a>
+    <a href="{% url 'shop01:admin_login' %}" style="color:var(--ink-400)">管理者</a>
+  </div>
+  {% else %}
+  <div class="tmz-links">
+    <a href="{% url 'shop01:login' %}" class="tmz-btn tmz-btn-p tmz-btn-sm">ログイン</a>
+    <a href="{% url 'shop01:register_user' %}" class="tmz-btn tmz-btn-r tmz-btn-sm">新規登録</a>
+    <a href="{% url 'shop01:admin_login' %}" style="color:var(--ink-400);font-size:13px">管理者</a>
+  </div>
+  {% endif %}
 </div>
-
 {% endblock %}

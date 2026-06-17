@@ -19,6 +19,7 @@
   @keyframes ripple{to{transform:scale(6);opacity:0}}
   @keyframes slideInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
   @keyframes sparkle{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateY(-36px) scale(0) rotate(180deg)}}
+  @keyframes scoreFloat{0%{opacity:1;transform:translateY(0) scale(1.2)}100%{opacity:0;transform:translateY(-50px) scale(.8)}}
 </style>
 
 <div id="danger-wrap" style="
@@ -199,6 +200,91 @@
       });
       this.style.position='relative'; this.style.overflow='hidden';
       this.appendChild(rip);
+    });
+
+    // ===== 逃げ回るボタン =====
+    let escapeCount = 0;
+    let btnX = 0, btnY = 0;
+    let isEscaping = false;
+
+    function showTaunt(text) {
+      const el = document.createElement('div');
+      el.textContent = text;
+      const r = btn.getBoundingClientRect();
+      Object.assign(el.style, {
+        position:'fixed', left:(r.left + r.width/2 - 60)+'px', top:(r.top - 38)+'px',
+        background:'#cc0000', color:'#fff', fontWeight:900, fontSize:13,
+        padding:'6px 14px', borderRadius:20, zIndex:10001, pointerEvents:'none',
+        animation:'scoreFloat .9s ease-out forwards', whiteSpace:'nowrap',
+        boxShadow:'0 4px 12px rgba(200,0,0,.5)'
+      });
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 900);
+    }
+
+    const taunts = [
+      'にげろ〜！💨', 'つかまえてみな😈', 'おっと！🏃', 'むりむり！💀',
+      'もう少し！🔥', 'ここじゃない〜！👻', 'あぶない！⚠️', 'やめて〜！😱',
+      'ふっふっふ😏', 'むだむだ！❌'
+    ];
+
+    function escapeBtn(mouseX, mouseY) {
+      if (btn.disabled) return;
+      const r = btn.getBoundingClientRect();
+      const bCx = r.left + r.width / 2;
+      const bCy = r.top + r.height / 2;
+
+      // Direction away from mouse
+      const dx = bCx - mouseX;
+      const dy = bCy - mouseY;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist > 180) return; // only run if mouse is close
+
+      const nx = dx / (dist || 1);
+      const ny = dy / (dist || 1);
+      const move = 120 + Math.random() * 80;
+
+      btnX += nx * move;
+      btnY += ny * move;
+
+      // Clamp inside viewport
+      const maxX = window.innerWidth  - r.width  - 20;
+      const maxY = window.innerHeight - r.height - 20;
+      btnX = Math.max(-(r.left - 20), Math.min(maxX - r.left, btnX));
+      btnY = Math.max(-(r.top  - 20), Math.min(maxY - r.top,  btnY));
+
+      btn.style.transform = `translate(${btnX}px, ${btnY}px)`;
+      btn.style.transition = 'transform 0.18s cubic-bezier(0.34,1.56,0.64,1)';
+
+      escapeCount++;
+      if (escapeCount % 3 === 1) showTaunt(taunts[Math.floor(Math.random()*taunts.length)]);
+
+      // Screen shake every 5 escapes
+      if (escapeCount % 5 === 0) {
+        document.getElementById('danger-wrap').style.animation = 'shake .4s both, warningFlash 2s ease-in-out infinite';
+      }
+    }
+
+    // Escape on mousemove when close
+    document.addEventListener('mousemove', function(e) {
+      if (btn.disabled) return;
+      escapeBtn(e.clientX, e.clientY);
+    });
+
+    // Also escape on touchmove for mobile
+    document.addEventListener('touchmove', function(e) {
+      if (btn.disabled) return;
+      const t = e.touches[0];
+      escapeBtn(t.clientX, t.clientY);
+    });
+
+    // After 10 escapes, give up and let them click (but show warning)
+    btn.addEventListener('mouseenter', function() {
+      if (this.disabled) return;
+      if (escapeCount > 0 && escapeCount % 10 === 0) {
+        showTaunt('…もういいか。好きにしろ 💀');
+        btn.style.transition = 'none';
+      }
     });
   }
 })();

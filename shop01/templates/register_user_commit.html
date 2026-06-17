@@ -3,21 +3,140 @@
 {% block title %}会員登録完了 — temuzon{% endblock %}
 
 {% block content %}
-<script>
-(function(){
-  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
-  const ctx=new AC();
-  function n(f,t,d,tp,v){const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type=tp||'sine';o.frequency.value=f;g.gain.setValueAtTime(v||.18,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+t+d);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+d+.05);}
-  [[440,.0,.18],[554,.12,.18],[659,.24,.18],[880,.36,.30]].forEach(([f,t,d])=>n(f,t,d,'sine',.48));
-  n(1320,.42,.20,'triangle',.1);
-})();
-</script>
-<div class="tmz-page">
-  <div class="tmz-wrap" style="text-align:center;max-width:480px">
-    <div style="font-size:64px;margin-bottom:16px">🎉</div>
-    <h2 style="font-family:var(--fd);font-size:28px;font-weight:800;margin-bottom:12px">{{ name }}さん、ようこそ！</h2>
-    <p style="color:var(--ink-500);margin-bottom:28px">会員登録が完了しました。さっそくお買い物を始めましょう。</p>
-    <a href="{% url 'shop01:main' %}" class="tmz-btn tmz-btn-p tmz-btn-lg">商品を探す</a>
+<style>
+@keyframes popIn{0%{opacity:0;transform:scale(0) rotate(-20deg)}60%{transform:scale(1.15) rotate(5deg)}80%{transform:scale(.95) rotate(-2deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,90,44,.7)}70%{box-shadow:0 0 0 18px rgba(255,90,44,0)}}
+@keyframes rainbowBg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes starSpin{from{transform:rotate(0) scale(1)}to{transform:rotate(360deg) scale(1.2)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-18px)}70%{transform:translateY(-8px)}}
+@keyframes glow{0%,100%{text-shadow:0 0 10px #FF5A2C,0 0 30px #FF5A2C}50%{text-shadow:0 0 20px #FFC02E,0 0 60px #DC1F73,0 0 90px #FF5A2C}}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0) scale(1)}100%{transform:translateY(110vh) rotate(900deg) scale(.4)}}
+@keyframes firework{0%{transform:translate(0,0) scale(1.5);opacity:1}100%{transform:translate(var(--fx,80px),var(--fy,-80px)) scale(0);opacity:0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+</style>
+
+<!-- Confetti -->
+<div id="confetti-wrap" style="position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:999"></div>
+
+<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;
+  background:linear-gradient(270deg,#FFF2EC,#FFF8F0,#FFE4D4,#FFF2EC);
+  background-size:400% 400%;animation:rainbowBg 6s ease infinite;position:relative;overflow:hidden">
+
+  <!-- Background floating emojis -->
+  <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden">
+    <span style="position:absolute;font-size:48px;top:8%;left:5%;animation:float 4s 0s ease-in-out infinite;opacity:.25">🎉</span>
+    <span style="position:absolute;font-size:36px;top:15%;right:8%;animation:float 3.5s .5s ease-in-out infinite;opacity:.2">🎊</span>
+    <span style="position:absolute;font-size:42px;bottom:20%;left:8%;animation:float 5s 1s ease-in-out infinite;opacity:.2">⭐</span>
+    <span style="position:absolute;font-size:32px;bottom:15%;right:6%;animation:float 4.5s .3s ease-in-out infinite;opacity:.2">🛍️</span>
+    <span style="position:absolute;font-size:38px;top:40%;left:2%;animation:float 3.8s .8s ease-in-out infinite;opacity:.18">✨</span>
+    <span style="position:absolute;font-size:34px;top:35%;right:3%;animation:float 4.2s 1.2s ease-in-out infinite;opacity:.18">💝</span>
+  </div>
+
+  <div style="max-width:540px;width:100%;text-align:center;position:relative;z-index:1">
+
+    <!-- Animated star ring -->
+    <div style="position:relative;display:inline-block;margin-bottom:8px">
+      <div style="font-size:96px;animation:popIn .8s cubic-bezier(0.34,1.56,0.64,1) both;filter:drop-shadow(0 0 20px rgba(255,90,44,.6))">🎉</div>
+      <div style="position:absolute;inset:-20px;display:flex;align-items:center;justify-content:center;pointer-events:none">
+        <div style="width:140px;height:140px;border-radius:50%;border:3px dashed rgba(255,90,44,.3);animation:starSpin 8s linear infinite"></div>
+      </div>
+    </div>
+
+    <!-- Rainbow gradient name -->
+    <h1 style="font-family:var(--fd);font-size:clamp(28px,5vw,40px);font-weight:900;margin:0 0 10px;
+      background:linear-gradient(135deg,#FF5A2C,#FFC02E,#DC1F73,#00A896);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      animation:popIn .7s .2s both;line-height:1.2">
+      {{ name }}さん、ようこそ！
+    </h1>
+
+    <p style="font-size:18px;font-weight:700;color:var(--ink-700);margin:0 0 6px;animation:slideUp .6s .35s both">
+      会員登録が完了しました 🎊
+    </p>
+    <p style="font-size:14px;color:var(--ink-500);margin:0 0 32px;animation:slideUp .5s .45s both">
+      temuzonへのご登録ありがとうございます。さっそくお買い物を始めましょう！
+    </p>
+
+    <!-- Benefit cards -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px;animation:slideUp .6s .5s both">
+      <div style="background:#fff;border-radius:16px;padding:16px 10px;box-shadow:0 4px 16px rgba(255,90,44,.12);border:1px solid rgba(255,90,44,.15)">
+        <div style="font-size:28px;margin-bottom:6px;animation:bounce 2s 1s infinite">🚀</div>
+        <div style="font-weight:800;font-size:12px;color:var(--ink-900)">即日発送</div>
+      </div>
+      <div style="background:#fff;border-radius:16px;padding:16px 10px;box-shadow:0 4px 16px rgba(255,90,44,.12);border:1px solid rgba(255,90,44,.15)">
+        <div style="font-size:28px;margin-bottom:6px;animation:bounce 2s 1.2s infinite">💰</div>
+        <div style="font-weight:800;font-size:12px;color:var(--ink-900)">お得なセール</div>
+      </div>
+      <div style="background:#fff;border-radius:16px;padding:16px 10px;box-shadow:0 4px 16px rgba(255,90,44,.12);border:1px solid rgba(255,90,44,.15)">
+        <div style="font-size:28px;margin-bottom:6px;animation:bounce 2s 1.4s infinite">🔒</div>
+        <div style="font-weight:800;font-size:12px;color:var(--ink-900)">安全決済</div>
+      </div>
+    </div>
+
+    <!-- CTA button -->
+    <div style="animation:slideUp .6s .6s both">
+      <a href="{% url 'shop01:main' %}" style="
+        display:inline-flex;align-items:center;gap:10px;
+        padding:16px 40px;border-radius:50px;text-decoration:none;
+        background:linear-gradient(135deg,#FF7A4D,#FF5A2C);
+        color:#fff;font-family:var(--fb);font-weight:900;font-size:18px;
+        box-shadow:0 8px 28px rgba(255,90,44,.45);
+        animation:pulse 2s .8s infinite;
+        transition:transform .2s,box-shadow .2s
+      "
+      onmouseover="this.style.transform='scale(1.06) translateY(-3px)';this.style.boxShadow='0 14px 40px rgba(255,90,44,.6)'"
+      onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(255,90,44,.45)'">
+        🛍️ さっそくお買い物する
+      </a>
+    </div>
+
   </div>
 </div>
+
+<script>
+(function(){
+  /* Confetti */
+  var colors=["#FF5A2C","#FFC02E","#DC1F73","#00A896","#FFD45C","#FF7A4D","#7C3AED","#fff"];
+  var wrap=document.getElementById('confetti-wrap');
+  for(var i=0;i<140;i++){
+    var p=document.createElement('div');
+    var circle=i%3===0, sz=6+Math.random()*10;
+    Object.assign(p.style,{
+      position:'absolute',left:(Math.random()*100)+'%',top:'-24px',
+      width:sz+'px',height:circle?sz+'px':(sz*1.9)+'px',
+      borderRadius:circle?'50%':'3px',
+      background:colors[Math.floor(Math.random()*colors.length)],
+      animation:'confettiFall '+(1.6+Math.random()*2.2)+'s '+(Math.random()*2.5)+'s ease-in both',
+      transform:'rotate('+(Math.random()*360)+'deg)'
+    });
+    wrap.appendChild(p);
+  }
+  /* Fireworks */
+  function burst(count){
+    var cols=["#FF5A2C","#FFC02E","#DC1F73","#00A896","#FFD45C","#FF7A4D","#fff"];
+    for(var b=0;b<(count||6);b++){
+      (function(bb){setTimeout(function(){
+        var cx=(15+Math.random()*70)+'vw', cy=(8+Math.random()*50)+'vh';
+        for(var j=0;j<24;j++){
+          var ang=(j/24)*Math.PI*2, dist=60+Math.random()*110;
+          var el=document.createElement('div');
+          Object.assign(el.style,{position:'fixed',left:cx,top:cy,
+            width:(6+Math.random()*5)+'px',height:(6+Math.random()*5)+'px',
+            borderRadius:j%3===0?'50%':'2px',
+            background:cols[Math.floor(Math.random()*cols.length)],
+            zIndex:9999,pointerEvents:'none',
+            '--fx':Math.cos(ang)*dist+'px','--fy':Math.sin(ang)*dist+'px',
+            animation:'firework '+(0.7+Math.random()*0.4)+'s '+(Math.random()*0.12)+'s ease-out both'
+          });
+          document.body.appendChild(el); setTimeout(function(){el.remove();},1200);
+        }
+      },bb*300);})(b);
+    }
+  }
+  burst(7);
+  setTimeout(function(){burst(6);},1400);
+  setTimeout(function(){burst(5);},2800);
+})();
+</script>
 {% endblock %}

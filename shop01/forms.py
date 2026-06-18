@@ -108,6 +108,7 @@ class AdminItemForm(forms.Form):
     price = forms.IntegerField(label='価格', min_value=0)
     stock = forms.IntegerField(label='在庫数', min_value=0)
     recommend = forms.BooleanField(label='おすすめ', required=False)
+    image = forms.ImageField(label='商品画像', required=False)
 
     def clean_item_id(self):
         item_id = self.cleaned_data['item_id']

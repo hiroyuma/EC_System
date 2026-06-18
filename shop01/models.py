@@ -35,6 +35,7 @@ class ShoppingItem(models.Model):
     price = models.IntegerField(verbose_name='価格')
     stock = models.IntegerField(verbose_name='在庫数')
     recommend = models.BooleanField(verbose_name='オススメ', default=False)
+    image = models.ImageField(verbose_name='商品画像', upload_to='items/', null=True, blank=True)
 
 class ShoppingItemincart(models.Model):
     class Meta:

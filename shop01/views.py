@@ -639,7 +639,7 @@ class AdminItemCreate(View):
 
     def post(self, request, *args, **kwargs):
         search_form = AdminItemSearchForm()
-        item_form = AdminItemForm(request.POST)
+        item_form = AdminItemForm(request.POST, request.FILES)
         items = ShoppingItem.objects.select_related('category').order_by('item_id')
         if not item_form.is_valid():
             context = {
@@ -657,6 +657,7 @@ class AdminItemCreate(View):
             price=item_form.cleaned_data['price'],
             stock=item_form.cleaned_data['stock'],
             recommend=item_form.cleaned_data['recommend'],
+            image=item_form.cleaned_data.get('image'),
         )
         return redirect('shop01:admin_main')
 

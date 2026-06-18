@@ -355,14 +355,20 @@ class Cart(View):
         for item in cart_items:
             total_price += item.amount*item.item.price
 
-        discount = request.session.get('discount', 0)
-        discounted_total = int(total_price*(100 - discount)/ 100)
+
+        discount = request.session.get("discount", 0)
+        discounted_total = int(total_price * (100 - discount) / 100)
+        abs_discount = abs(discount)
+
 
         context = {
             'cart_items':cart_items,
             'total_price':total_price,
-            'discount':discount,
-            'discounted_total':discounted_total
+
+            'discount': discount,
+            'discounted_total': discounted_total,
+            'abs_discount': abs_discount,
+
         }
 
         return render(request, 'cart.html', context)
@@ -388,11 +394,20 @@ class PurchaseView(View):
             return redirect('shop01:cart')
 
         total_price = sum(item.amount * item.item.price for item in cart_items)
+        
+        discount = request.session.get("discount", 0)
+        discounted_total = int(total_price * (100 - discount) / 100)
+        abs_discount = abs(discount)
 
         context = {
             'user_info': user_info,
             'cart_items': cart_items,
             'total_price': total_price,
+            
+            'discount': discount,
+            'discounted_total': discounted_total,
+            'abs_discount': abs_discount,
+
         }
         return render(request, 'purchase.html', context)
 
@@ -411,6 +426,13 @@ class PurchaseCommitView(View):
         cart_items = ShoppingItemincart.objects.filter(user_id=user_id)
         if not cart_items.exists():
             return redirect('shop01:cart')
+        
+                # ✅ これをここに追加！！！
+        discount = request.session.get("discount", 0)
+
+        total_price = sum(item.amount * item.item.price for item in cart_items)
+        discounted_total = int(total_price * (100 - discount) / 100)
+
 
         with transaction.atomic():
             last_purchase = ShoppingPurchase.objects.order_by('-purchase_id').first()
@@ -421,7 +443,11 @@ class PurchaseCommitView(View):
                 destination=destination,
                 booked_date=timezone.now(),
                 cancel=False,
-                user=user_info
+                user=user_info,
+                
+                discount=discount,
+                total_price=discounted_total
+
             )
 
             last_detail = ShoppingPurchasedetail.objects.order_by('-purchase_detail_id').first()

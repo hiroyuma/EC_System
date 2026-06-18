@@ -72,7 +72,30 @@
 
         <div style="border-top:1px solid var(--ink-200);margin:12px 0;padding-top:12px;display:flex;justify-content:space-between;align-items:center">
           <b>合計</b>
-          <span class="tmz-price tmz-price-lg">¥{{ total_price|floatformat:"0" }}</span>
+        
+          {% if discount != 0 %}
+            <div style="text-align:right">
+        
+              {% if discount > 0 %}
+                <div style="color:green;font-weight:700">
+                  🎉 割引：{{ discount }}%
+                </div>
+              {% else %}
+                <div style="color:red;font-weight:700">
+                  💀 追加料金：{{ abs_discount }}%
+                </div>
+              {% endif %}
+        
+              <span class="tmz-price tmz-price-lg">
+                ¥{{ discounted_total|floatformat:"0" }}
+              </span>
+        
+            </div>
+          {% else %}
+            <span class="tmz-price tmz-price-lg">
+              ¥{{ total_price|floatformat:"0" }}
+            </span>
+          {% endif %}
         </div>
         <form action="{% url 'shop01:purchase' %}" method="GET" style="margin-top:4px">
           <input type="submit" value="購入手続きへ" style="border:none;width:100%;padding:13px;border-radius:var(--r-md);background:var(--brand);color:#fff;font-family:var(--fb);font-weight:700;font-size:16px;cursor:pointer" />

@@ -55,6 +55,9 @@ class ShoppingPurchase(models.Model):
     booked_date = models.DateTimeField(verbose_name='注文日')
     cancel = models.BooleanField(verbose_name='キャンセル', default=False)
     user = models.ForeignKey(AccountUser, verbose_name='注文者', on_delete=models.CASCADE)
+        
+    discount = models.IntegerField(default=0)
+    total_price = models.IntegerField(default=0)
 
 class ShoppingPurchasedetail(models.Model):
     class Meta:
@@ -64,6 +67,7 @@ class ShoppingPurchasedetail(models.Model):
     amount = models.IntegerField(verbose_name='注文数')
     item = models.ForeignKey(ShoppingItem, verbose_name='商品ID', on_delete=models.CASCADE)
     purchase = models.ForeignKey(ShoppingPurchase, verbose_name='注文ID', on_delete=models.CASCADE)
+
 
 class AdministratorAdmin(models.Model):
     class Meta:

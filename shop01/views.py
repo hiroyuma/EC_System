@@ -9,6 +9,7 @@ from django.views.generic import View, TemplateView
 from shop01.forms import UserLoginForm, UserForm, KeywordForm, ItemNumForm, UpdataUserForm, ConfirmUserForm, AdminLoginForm
 import random
 import datetime
+from django.utils import timezone
 # Create your views here.
 
 class Toppage(View):
@@ -370,11 +371,9 @@ def lottery_discount(request):
     if 'discount' in request.session:
         return redirect('shop01:cart')
     
-    discount = random.randint(100, -100)
+    discount = random.randint(-100, 100)
     request.session['discount'] = discount
     return redirect('shop01:cart')
-    
-from django.utils import timezone
 
 class PurchaseView(View):
     def get(self, request, *args, **kwargs):
@@ -483,6 +482,7 @@ class DeleteCart(View):
     
 class Purchase(View):
     def get(self, request, *args, **kwargs):
+
         return redirect('shop01:cart')
 
     def post(self, request, *args, **kwargs):

@@ -5,21 +5,147 @@
 {% block header %}{% endblock %}
 
 {% block content %}
-<script>
-(function(){
-  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
-  const ctx=new AC();
-  function n(f,t,d,tp,v){const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type=tp||'sine';o.frequency.value=f;g.gain.setValueAtTime(v||.18,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+t+d);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+d+.05);}
-  [[392,.0,.38],[349,.22,.38],[294,.46,.42],[247,.72,.50],[220,.98,.60]].forEach(([f,t,d])=>n(f,t,d,'sine',.48));
-})();
-</script>
-<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--cream);padding:40px 24px">
-  <div style="text-align:center;max-width:440px">
-    <div style="font-size:64px;margin-bottom:16px">👋</div>
-    <h2 style="font-family:var(--fd);font-size:26px;font-weight:800;margin-bottom:12px">{{ user_name }}さん、ご利用ありがとうございました</h2>
-    <p style="color:var(--ink-500);margin-bottom:8px">退会処理が完了しました。</p>
-    <p style="color:var(--ink-500);margin-bottom:28px">またのご利用をお待ちしております。</p>
-    <a href="{% url 'shop01:login' %}" class="tmz-btn tmz-btn-p tmz-btn-lg">ログイン画面へ</a>
+<style>
+@keyframes rainFall{0%{transform:translateY(-100vh)}100%{transform:translateY(110vh)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes sob{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-4px) rotate(-3deg)}75%{transform:translateY(-2px) rotate(3deg)}}
+@keyframes tearDrop{0%{opacity:0;transform:translateY(-8px) scaleY(.5)}40%{opacity:1;transform:translateY(0) scaleY(1)}90%{opacity:.8;transform:translateY(18px) scaleY(1.2)}100%{opacity:0;transform:translateY(30px) scaleY(.8)}}
+@keyframes cloudDrift{0%,100%{transform:translateX(0)}50%{transform:translateX(12px)}}
+@keyframes dimPulse{0%,100%{opacity:.6}50%{opacity:.9}}
+@keyframes textFade{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:none}}
+@keyframes heartbreak{0%{transform:scale(1)}30%{transform:scale(1.1)}50%{transform:scale(.95) rotate(-5deg)}70%{transform:scale(1.05) rotate(3deg)}100%{transform:scale(1)}}
+</style>
+
+<!-- Rain canvas -->
+<canvas id="rain" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.55"></canvas>
+
+<!-- Dark overlay bg -->
+<div style="min-height:100vh;background:linear-gradient(180deg,#1a1f2e 0%,#0d1117 40%,#0a0e18 100%);display:flex;align-items:center;justify-content:center;padding:40px 24px;position:relative;z-index:1">
+
+  <!-- Clouds -->
+  <div style="position:absolute;top:0;left:0;right:0;height:200px;overflow:hidden;pointer-events:none">
+    <div style="position:absolute;top:20px;left:5%;font-size:90px;opacity:.25;animation:cloudDrift 6s ease-in-out infinite;filter:grayscale(1)">☁️</div>
+    <div style="position:absolute;top:10px;left:30%;font-size:120px;opacity:.18;animation:cloudDrift 8s ease-in-out infinite .5s;filter:grayscale(1)">☁️</div>
+    <div style="position:absolute;top:28px;right:8%;font-size:80px;opacity:.22;animation:cloudDrift 7s ease-in-out infinite 1s;filter:grayscale(1)">☁️</div>
+    <div style="position:absolute;top:5px;right:35%;font-size:100px;opacity:.15;animation:cloudDrift 9s ease-in-out infinite 2s;filter:grayscale(1)">☁️</div>
+  </div>
+
+  <!-- Card -->
+  <div style="text-align:center;max-width:480px;width:100%;animation:fadeIn .8s both;position:relative">
+
+    <!-- Broken heart -->
+    <div style="font-size:80px;margin-bottom:8px;position:relative;display:inline-block;animation:sob 3s ease-in-out infinite;filter:grayscale(.4)">
+      💔
+      <!-- Tears on heart -->
+      <div style="position:absolute;bottom:-8px;left:30%;width:6px;height:12px;background:linear-gradient(180deg,rgba(120,160,255,.9),rgba(80,130,255,0));border-radius:0 0 4px 4px;animation:tearDrop 2s ease-in infinite"></div>
+      <div style="position:absolute;bottom:-4px;left:55%;width:5px;height:10px;background:linear-gradient(180deg,rgba(120,160,255,.9),rgba(80,130,255,0));border-radius:0 0 4px 4px;animation:tearDrop 2s ease-in infinite .7s"></div>
+    </div>
+
+    <!-- Sad face -->
+    <div style="font-size:52px;margin-bottom:20px;animation:heartbreak 4s ease-in-out infinite">😢</div>
+
+    <!-- Message -->
+    <div style="background:rgba(255,255,255,.04);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:36px 40px;box-shadow:0 24px 60px rgba(0,0,0,.5)">
+      <h2 style="font-family:var(--fd);font-size:26px;font-weight:900;color:#d0d8f0;margin:0 0 16px;animation:textFade .6s .2s both;line-height:1.3">
+        {{ user_name }}さん、<br>さようなら…
+      </h2>
+
+      <div style="width:48px;height:3px;background:linear-gradient(90deg,transparent,rgba(120,160,255,.5),transparent);margin:0 auto 20px;border-radius:2px"></div>
+
+      <p style="color:rgba(180,195,230,.6);font-size:15px;margin-bottom:10px;animation:textFade .6s .35s both;line-height:1.7">
+        退会処理が完了しました。
+      </p>
+      <p style="color:rgba(140,160,200,.45);font-size:14px;margin-bottom:6px;animation:textFade .6s .5s both;line-height:1.7">
+        temuzonでのお買い物を<br>楽しんでいただけていたなら嬉しいです。
+      </p>
+      <p style="color:rgba(100,130,180,.35);font-size:13px;margin-bottom:28px;animation:textFade .6s .65s both">
+        …またいつか、戻ってきてください。
+      </p>
+
+      <!-- Rain emoji row -->
+      <div style="font-size:20px;letter-spacing:8px;margin-bottom:28px;animation:dimPulse 3s ease-in-out infinite">
+        🌧️🌧️🌧️
+      </div>
+
+      <a href="{% url 'shop01:login' %}" style="
+        display:inline-block;
+        padding:13px 36px;
+        border-radius:14px;
+        background:rgba(255,255,255,.07);
+        color:rgba(180,200,240,.7);
+        font-family:var(--fb);
+        font-weight:700;
+        font-size:15px;
+        text-decoration:none;
+        border:1px solid rgba(255,255,255,.12);
+        transition:background .2s,color .2s,transform .2s;
+        animation:textFade .6s .8s both
+      " onmouseover="this.style.background='rgba(255,255,255,.12)';this.style.color='rgba(220,230,255,.9)';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255,255,255,.07)';this.style.color='rgba(180,200,240,.7)';this.style.transform=''">
+        ← トップページへ戻る
+      </a>
+    </div>
+
+    <!-- Footer message -->
+    <div style="margin-top:24px;font-size:12px;color:rgba(100,120,160,.35);animation:textFade .6s 1s both">
+      今まで本当にありがとうございました。
+    </div>
   </div>
 </div>
+
+<script>
+/* ── Rain animation ── */
+(function(){
+  var c = document.getElementById('rain');
+  var ctx = c.getContext('2d');
+  c.width = window.innerWidth; c.height = window.innerHeight;
+  window.addEventListener('resize', function(){ c.width=window.innerWidth; c.height=window.innerHeight; });
+
+  var drops = [];
+  for (var i = 0; i < 180; i++) {
+    drops.push({
+      x: Math.random() * c.width,
+      y: Math.random() * c.height,
+      length: Math.random() * 18 + 8,
+      speed: Math.random() * 6 + 4,
+      opacity: Math.random() * .4 + .1,
+      width: Math.random() * 1.2 + .4
+    });
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.strokeStyle = 'rgba(120,160,255,1)';
+    drops.forEach(function(d) {
+      d.y += d.speed;
+      if (d.y > c.height + 20) { d.y = -20; d.x = Math.random() * c.width; }
+      ctx.save();
+      ctx.globalAlpha = d.opacity;
+      ctx.lineWidth = d.width;
+      ctx.beginPath();
+      ctx.moveTo(d.x, d.y);
+      ctx.lineTo(d.x - 1, d.y + d.length);
+      ctx.stroke();
+      ctx.restore();
+    });
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  /* ── Sad piano sound (descending) ── */
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    var actx = new AC();
+    [[392,.0,.6],[349,.4,.6],[330,.8,.6],[294,1.2,.7],[262,1.7,.8],[220,2.4,1.2]].forEach(function(arr){
+      var f=arr[0],t=arr[1],d=arr[2];
+      var o=actx.createOscillator(), g=actx.createGain();
+      o.connect(g); g.connect(actx.destination);
+      o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(.0,actx.currentTime+t);
+      g.gain.linearRampToValueAtTime(.22,actx.currentTime+t+.05);
+      g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+t+d);
+      o.start(actx.currentTime+t); o.stop(actx.currentTime+t+d+.1);
+    });
+  } catch(e){}
+})();
+</script>
 {% endblock %}

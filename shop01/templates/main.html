@@ -5,87 +5,254 @@
 {% block content %}
 <style>
 @keyframes bannerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-  #banner-track-wrap:hover > div{animation-play-state:paused}
-@keyframes slideInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,90,44,.7)}70%{box-shadow:0 0 0 14px rgba(255,90,44,0)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,90,44,.8)}70%{box-shadow:0 0 0 20px rgba(255,90,44,0)}}
+@keyframes heartbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.15)}28%{transform:scale(1)}}
+@keyframes discountBanner{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* Hero */
+#hero{background:linear-gradient(160deg,#0D0A07 0%,#1E1A17 35%,#3a1208 70%,#5a2010 100%);padding:48px 24px 36px;position:relative;overflow:hidden;z-index:1}
+
+/* Search box */
+.tmz-search-box{display:flex;max-width:780px;border-radius:20px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.5),0 0 0 2px rgba(255,90,44,.5);transition:box-shadow .3s}
+.tmz-search-box:focus-within{box-shadow:0 12px 60px rgba(255,90,44,.6),0 0 0 3px #FF5A2C}
+.tmz-search-box input[type=text]{flex:1;padding:18px 22px;border:none;font-size:16px;font-family:var(--fb);font-weight:600;background:#fff;outline:none}
+.tmz-search-box input[type=submit]{padding:0 32px;background:linear-gradient(135deg,#FF7A4D,#FF5A2C,#CC0000);background-size:200% 100%;color:#fff;border:none;font-family:var(--fb);font-weight:900;font-size:17px;cursor:pointer;transition:background-position .3s,transform .15s;white-space:nowrap;flex-shrink:0}
+.tmz-search-box input[type=submit]:hover{background-position:100% 0;transform:scaleX(1.04)}
+
+/* Fate btn */
+#fate-btn{background:linear-gradient(135deg,#ff00ff,#FF5A2C,#FFD700);color:#fff;font-size:20px;font-weight:900;padding:18px 48px;border:none;border-radius:50px;cursor:pointer;transition:transform .2s;font-family:var(--fd);position:relative;overflow:hidden;letter-spacing:.03em}
+#fate-btn::before{content:'';position:absolute;top:-50%;left:-75%;width:50%;height:200%;background:rgba(255,255,255,.22);transform:skewX(-20deg);transition:left .4s}
+#fate-btn:hover::before{left:150%}
+#fate-btn:hover{transform:scale(1.08) rotate(-2deg)}
+
+/* Countdown strip */
+.cd-num{display:inline-block;background:#1E1A17;color:#FFD700;font-family:var(--fd);font-weight:900;font-size:24px;padding:5px 12px;border-radius:8px;min-width:38px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.6)}
+
+/* Product cards in banner */
+.rec-card{flex-shrink:0;width:200px;margin:0 10px;border-radius:18px;overflow:hidden;background:#fff;text-decoration:none;display:block;box-shadow:0 4px 20px rgba(0,0,0,.45);transition:transform .25s,box-shadow .25s}
+.rec-card:hover{transform:translateY(-8px) scale(1.05);box-shadow:0 20px 50px rgba(255,90,44,.5)}
+
 </style>
 
-<!-- ===== BANNER SECTION ===== -->
-<div style="background:linear-gradient(135deg,#1E1A17 0%,#2a1205 100%);padding:32px 0 24px;overflow:hidden">
-  <!-- Label -->
-  <div style="text-align:center;margin-bottom:20px">
-    <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);border-radius:40px;padding:8px 22px;font-family:var(--fd);font-size:16px;font-weight:900;color:#fff">
-      ⭐ おすすめ商品
-      <span style="font-size:13px;color:rgba(255,255,255,.4);font-weight:600">— スクロールして見る</span>
-    </span>
-  </div>
 
-  <!-- Scrolling banner -->
-  <div id="banner-track-wrap" style="position:relative;overflow:hidden;width:100%">
-    <!-- Left/right fade masks -->
-    <div style="position:absolute;left:0;top:0;bottom:0;width:80px;background:linear-gradient(90deg,#1E1A17,transparent);z-index:2;pointer-events:none"></div>
-    <div style="position:absolute;right:0;top:0;bottom:0;width:80px;background:linear-gradient(270deg,#1E1A17,transparent);z-index:2;pointer-events:none"></div>
 
-    <div style="display:flex;animation:bannerScroll 32s linear infinite">
-
-      <!-- DB商品のみ表示（2周でシームレスループ） -->
-      {% for item in recommended_items %}
-      <a href="{% url 'shop01:item_detail' item.item_id %}" style="flex-shrink:0;width:200px;margin:0 10px;border-radius:18px;overflow:hidden;background:#fff;text-decoration:none;display:block;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 16px 40px rgba(255,90,44,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(0,0,0,.4)'">
-        <div style="height:110px;background:linear-gradient(135deg,#FFF2EC,#FFD4B0);display:flex;align-items:center;justify-content:center;font-size:52px;position:relative">
-          🛍️
-          <div style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#CC0000,#FF5A2C);color:#fff;font-weight:900;font-size:11px;padding:3px 9px;border-radius:20px">SALE</div>
-          {% if item.recommend %}<div style="position:absolute;top:8px;right:8px;background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;font-weight:900;font-size:10px;padding:3px 8px;border-radius:20px">⭐TOP</div>{% endif %}
-        </div>
-        <div style="padding:10px 13px 13px">
-          <div style="font-weight:800;font-size:13px;color:#1E1A17;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ item.name }}</div>
-          <div style="font-size:11px;color:#A89E94;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ item.manufacture }}</div>
-          <div style="font-family:var(--fd);font-weight:900;font-size:18px;color:#FF5A2C">¥{{ item.price|floatformat:"0" }}</div>
-        </div>
-      </a>
-      {% endfor %}
-      <!-- 2周目（シームレスループ用） -->
-      {% for item in recommended_items %}
-      <a href="{% url 'shop01:item_detail' item.item_id %}" style="flex-shrink:0;width:200px;margin:0 10px;border-radius:18px;overflow:hidden;background:#fff;text-decoration:none;display:block;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 16px 40px rgba(255,90,44,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(0,0,0,.4)'">
-        <div style="height:110px;background:linear-gradient(135deg,#FFF2EC,#FFD4B0);display:flex;align-items:center;justify-content:center;font-size:52px;position:relative">
-          🛍️
-          <div style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#CC0000,#FF5A2C);color:#fff;font-weight:900;font-size:11px;padding:3px 9px;border-radius:20px">SALE</div>
-        </div>
-        <div style="padding:10px 13px 13px">
-          <div style="font-weight:800;font-size:13px;color:#1E1A17;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ item.name }}</div>
-          <div style="font-size:11px;color:#A89E94;margin-bottom:4px">{{ item.manufacture }}</div>
-          <div style="font-family:var(--fd);font-weight:900;font-size:18px;color:#FF5A2C">¥{{ item.price|floatformat:"0" }}</div>
-        </div>
-      </a>
-      {% endfor %}
-
+<!-- ===== HERO ===== -->
+<div id="hero">
+  <!-- Top discount banner -->
+  <div style="overflow:hidden;margin-bottom:32px;border-radius:12px">
+    <div style="background:linear-gradient(90deg,#FF0000,#FF5A2C,#FFD700,#FF5A2C,#FF0000);padding:9px 0;white-space:nowrap">
+      <div style="display:inline-block;animation:discountBanner 15s linear infinite;font-weight:900;font-size:13px;color:#fff;letter-spacing:.1em">
+        &nbsp;🔥 超お得セール実施中！ ⚡ 今すぐGET！ 🚀 限定特価！ 💰 お見逃しなく！ ⭐ テムゾン最安値挑戦！ 🎯 数量限定！ 🎁 送料無料対象あり！ 🔥 超お得セール実施中！ ⚡ 今すぐGET！ 🚀 限定特価！ 💰 お見逃しなく！ ⭐ テムゾン最安値挑戦！ 🎯 数量限定！ 🎁 送料無料対象あり！&nbsp;
+      </div>
     </div>
   </div>
 
+  <!-- Hero content -->
+  <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;flex-wrap:wrap">
+    <div>
+      <!-- Big headline -->
+      <div style="font-size:13px;font-weight:800;color:rgba(255,255,255,.5);letter-spacing:.15em;margin-bottom:12px;">TODAY'S DEALS</div>
+      <h1 style="font-family:var(--fd);font-size:clamp(32px,5vw,56px);font-weight:900;color:#fff;margin:0 0 8px;line-height:1.1;">
+        欲しいものが<br>
+        <span style="background:linear-gradient(90deg,#FF5A2C,#FFD700,#FF0080);-webkit-background-clip:text;-webkit-text-fill-color:transparent">きっと見つかる。</span>
+      </h1>
+      <div style="font-size:16px;color:rgba(255,255,255,.6);font-weight:600;margin-bottom:28px;">最安値挑戦中 &nbsp;·&nbsp; 即日発送 &nbsp;·&nbsp; 安心決済</div>
 
+      <!-- Search form -->
+      <form action="{% url 'shop01:search_result' %}" method="GET" style="">
+        {% csrf_token %}
+        <div class="tmz-search-box">
+          {% for field in form %}{{ field }}{% endfor %}
+          <input type="submit" value="🔍 検索">
+        </div>
+      </form>
+    </div>
+
+    <!-- Countdown + stats -->
+    <div style=";flex-shrink:0">
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:24px 28px;text-align:center">
+        <div style="font-size:13px;font-weight:900;color:#FFD700;margin-bottom:12px;letter-spacing:.08em">⏰ タイムセール終了まで</div>
+        <div style="display:flex;align-items:center;gap:8px;justify-content:center">
+          <span class="cd-num" id="cd-h">02</span>
+          <span style="color:#FFD700;font-size:22px;font-weight:900;animation:heartbeat 3s infinite">:</span>
+          <span class="cd-num" id="cd-m">47</span>
+          <span style="color:#FFD700;font-size:22px;font-weight:900;animation:heartbeat 3s infinite 1.5s">:</span>
+          <span class="cd-num" id="cd-s">33</span>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="background:rgba(255,90,44,.2);border-radius:12px;padding:10px;text-align:center">
+            <div style="font-family:var(--fd);font-weight:900;font-size:20px;color:#FF5A2C">4.9</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.5)">平均評価 ★</div>
+          </div>
+          <div style="background:rgba(255,215,0,.15);border-radius:12px;padding:10px;text-align:center">
+            <div style="font-family:var(--fd);font-weight:900;font-size:20px;color:#FFD700">即日</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.5)">発送対応</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- ===== SEARCH SECTION ===== -->
-<div style="background:linear-gradient(180deg,#2a1205 0%,#FF5A2C 100%);padding:0 24px">
-  <div style="max-width:1100px;margin:0 auto;padding:32px 0 28px">
-    <h2 style="font-family:var(--fd);font-size:26px;font-weight:900;color:#fff;margin:0 0 18px;animation:slideInUp .4s both">🔍 商品を探す</h2>
-    <form action="{% url 'shop01:search_result' %}" method="GET">
-      {% csrf_token %}
-      <div style="display:flex;max-width:720px;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.35);animation:slideInUp .4s .1s both">
-        {% for field in form %}{{ field }}{% endfor %}
-        <input type="submit" value="検索" style="padding:0 28px;background:linear-gradient(135deg,#FF7A4D,#ED4715);color:#fff;border:none;font-family:var(--fb);font-weight:900;font-size:16px;cursor:pointer;white-space:nowrap;flex-shrink:0">
-      </div>
-    </form>
+<!-- ===== おすすめ BANNER ===== -->
+<div style="background:linear-gradient(135deg,#1E1A17 0%,#2a1205 100%);padding:28px 0 24px;overflow:hidden;position:relative;z-index:1">
+  <div style="text-align:center;margin-bottom:18px">
+    <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:40px;padding:8px 22px;font-family:var(--fd);font-size:15px;font-weight:900;color:#fff">
+      ⭐ おすすめ商品をチェック
+      <span style="font-size:12px;color:rgba(255,255,255,.35);font-weight:600">— ホバーで止まる</span>
+    </span>
+  </div>
 
-  </div>
-<!-- 運命の一品ボタン（ログイン時のみ） -->
+  <div id="banner-track-wrap" style="position:relative;overflow:hidden;width:100%">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:90px;background:linear-gradient(90deg,#1E1A17,transparent);z-index:2;pointer-events:none"></div>
+    <div style="position:absolute;right:0;top:0;bottom:0;width:90px;background:linear-gradient(270deg,#1E1A17,transparent);z-index:2;pointer-events:none"></div>
+
+    <div id="banner-track" style="display:flex;animation:bannerScroll 30s linear infinite">
+      {% for item in recommended_items %}
+      <a href="{% url 'shop01:item_detail' item.item_id %}" class="rec-card">
+        <div style="height:118px;background:linear-gradient(135deg,#FFF2EC,#FFD4B0);display:flex;align-items:center;justify-content:center;font-size:52px;position:relative">
+          {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}" style="width:100%;height:100%;object-fit:cover">{% else %}<span style="font-size:52px">🛍️</span>{% endif %}
+          <div style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#CC0000,#FF5A2C);color:#fff;font-weight:900;font-size:11px;padding:3px 9px;border-radius:20px">SALE</div>
+          {% if item.recommend %}<div style="position:absolute;top:8px;right:8px;background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;font-weight:900;font-size:10px;padding:3px 8px;border-radius:20px">⭐TOP</div>{% endif %}
+        </div>
+        <div style="padding:10px 13px 14px">
+          <div style="font-weight:800;font-size:13px;color:#1E1A17;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ item.name }}</div>
+          <div style="font-size:11px;color:#A89E94;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ item.manufacture }}</div>
+          <div style="font-family:var(--fd);font-weight:900;font-size:18px;color:#FF5A2C">¥{{ item.price|floatformat:"0" }}</div>
+        </div>
+      </a>
+      {% endfor %}
+      <!-- 2周目（シームレスループ） -->
+      {% for item in recommended_items %}
+      <a href="{% url 'shop01:item_detail' item.item_id %}" class="rec-card">
+        <div style="height:118px;background:linear-gradient(135deg,#FFF2EC,#FFD4B0);display:flex;align-items:center;justify-content:center;font-size:52px;position:relative">
+          {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}" style="width:100%;height:100%;object-fit:cover">{% else %}<span style="font-size:52px">🛍️</span>{% endif %}
+          <div style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#CC0000,#FF5A2C);color:#fff;font-weight:900;font-size:11px;padding:3px 9px;border-radius:20px">SALE</div>
+        </div>
+        <div style="padding:10px 13px 14px">
+          <div style="font-weight:800;font-size:13px;color:#1E1A17;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ item.name }}</div>
+          <div style="font-size:11px;color:#A89E94;margin-bottom:5px">{{ item.manufacture }}</div>
+          <div style="font-family:var(--fd);font-weight:900;font-size:18px;color:#FF5A2C">¥{{ item.price|floatformat:"0" }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- ===== FATE BUTTON ===== -->
 {% if request.session.is_login %}
-<div style="text-align:center;padding:32px 24px 28px;animation:slideInUp .5s .4s both">
-  <form action="{% url 'shop01:random_purchase' %}" method="POST">
+<div style="background:linear-gradient(180deg,#2a1205 0%,#1E1A17 100%);padding:36px 24px;text-align:center;position:relative;z-index:1;overflow:hidden">
+  <div style="margin-bottom:12px;font-size:14px;color:rgba(255,255,255,.4);font-weight:700;">temuzonが選ぶ、あなたの運命の出会い</div>
+  <form action="{% url 'shop01:random_purchase' %}" method="POST" onsubmit="fateSubmit(event,this)">
     {% csrf_token %}
-    <button type="submit" style="background:linear-gradient(135deg,#ff00ff,#FF5A2C);color:#fff;font-size:20px;font-weight:900;padding:16px 44px;border:none;border-radius:50px;cursor:pointer;box-shadow:0 0 28px rgba(255,0,255,.55);transition:transform .2s;animation:pulseGlow 2s infinite;font-family:var(--fd)" onmouseover="this.style.transform='scale(1.06) rotate(-2deg)'" onmouseout="this.style.transform='none'">
-      🎰 運命の1品を即時決済する（※キャンセル不可）
-    </button>
+    <button type="submit" id="fate-btn">🎰 運命の1品を即時決済する（※キャンセル不可）</button>
   </form>
+  <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,.25)">ランダムで商品が選ばれ即時購入されます</div>
+</div>
+{% else %}
+<!-- Not logged in: prompt login -->
+<div style="background:linear-gradient(180deg,#2a1205,#1E1A17);padding:28px 24px;text-align:center;z-index:1;position:relative">
+  <div style="display:inline-flex;align-items:center;gap:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:16px 28px;flex-wrap:wrap;justify-content:center">
+    <span style="font-size:14px;color:rgba(255,255,255,.6);font-weight:700">🎰 運命の一品ボタンは</span>
+    <a href="{% url 'shop01:login' %}" style="background:linear-gradient(135deg,#FF7A4D,#FF5A2C);color:#fff;font-weight:900;font-size:15px;padding:10px 24px;border-radius:12px;text-decoration:none;box-shadow:0 6px 20px rgba(255,90,44,.5);">ログインして使う →</a>
+  </div>
 </div>
 {% endif %}
+
+<!-- ===== FEATURES STRIP ===== -->
+<div style="background:#F4EFE9;padding:24px;z-index:1;position:relative">
+  <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+    <div style="background:#fff;border-radius:18px;padding:18px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(30,26,23,.07);" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(255,90,44,.15)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(30,26,23,.07)'">
+      <div style="font-size:30px;animation:heartbeat 4s infinite">🚀</div>
+      <div><div style="font-weight:900;font-size:13px;color:var(--ink-900)">即日発送</div><div style="font-size:11px;color:var(--ink-400)">注文当日出荷</div></div>
+    </div>
+    <div style="background:#fff;border-radius:18px;padding:18px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(30,26,23,.07);" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(255,90,44,.15)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(30,26,23,.07)'">
+      <div style="font-size:30px;animation:heartbeat 4s infinite .3s">🔒</div>
+      <div><div style="font-weight:900;font-size:13px;color:var(--ink-900)">安全決済</div><div style="font-size:11px;color:var(--ink-400)">SSL完全対応</div></div>
+    </div>
+    <div style="background:#fff;border-radius:18px;padding:18px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(30,26,23,.07);" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(255,90,44,.15)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(30,26,23,.07)'">
+      <div style="font-size:30px;animation:heartbeat 4s infinite .6s">↩️</div>
+      <div><div style="font-weight:900;font-size:13px;color:var(--ink-900)">返品保証</div><div style="font-size:11px;color:var(--ink-400)">30日以内OK</div></div>
+    </div>
+    <div style="background:#fff;border-radius:18px;padding:18px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(30,26,23,.07);" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(255,90,44,.15)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(30,26,23,.07)'">
+      <div style="font-size:30px;animation:heartbeat 4s infinite .9s">🎁</div>
+      <div><div style="font-weight:900;font-size:13px;color:var(--ink-900)">ギフト包装</div><div style="font-size:11px;color:var(--ink-400)">無料対応</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Explosion canvas -->
+<canvas id="fate-expl" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;display:none"></canvas>
+<!-- Fate overlay -->
+<div id="fate-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9998;align-items:center;justify-content:center;">
+  <div style="background:linear-gradient(135deg,#ff00ff,#FF5A2C,#FFD700);border-radius:32px;padding:48px 56px;text-align:center;box-shadow:0 24px 80px rgba(255,0,255,.6);animation:zoomIn .4s both;max-width:360px">
+    <div id="fate-emoji" style="font-size:72px;margin-bottom:16px;animation:floatUp 1s ease-in-out infinite">🎰</div>
+    <div id="fate-msg" style="font-family:var(--fd);font-size:22px;font-weight:900;color:#fff;margin-bottom:8px">運命を選定中…</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.75)">しばらくお待ちください</div>
+  </div>
+</div>
+
+<script>
+/* ── Countdown ── */
+
+(function(){
+  var end = Date.now() + (2*3600+47*60+33)*1000;
+  function tick(){
+    var rem = Math.max(0,Math.floor((end-Date.now())/1000));
+    document.getElementById('cd-h').textContent = String(Math.floor(rem/3600)).padStart(2,'0');
+    document.getElementById('cd-m').textContent = String(Math.floor((rem%3600)/60)).padStart(2,'0');
+    document.getElementById('cd-s').textContent = String(rem%60).padStart(2,'0');
+  }
+  tick(); setInterval(tick,1000);
+})();
+
+/* ── Banner pause on hover ── */
+var track = document.getElementById('banner-track');
+if(track){
+  track.parentElement.addEventListener('mouseenter',function(){ track.style.animationPlayState='paused'; });
+  track.parentElement.addEventListener('mouseleave',function(){ track.style.animationPlayState='running'; });
+}
+
+/* ── Fate button explosion ── */
+function fateSubmit(e, form){
+  e.preventDefault();
+  var ov = document.getElementById('fate-overlay');
+  var fc = document.getElementById('fate-expl');
+  fc.style.display='block'; fc.width=window.innerWidth; fc.height=window.innerHeight;
+  var ctx = fc.getContext('2d');
+  var particles=[];
+  var colors=['#FF5A2C','#FFD700','#FF0080','#00E5FF','#7CFC00','#FF8C00','#fff','#ff00ff'];
+  for(var i=0;i<250;i++){
+    var a=Math.random()*Math.PI*2, sp=Math.random()*16+5;
+    particles.push({x:window.innerWidth/2,y:window.innerHeight/2,
+      vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-8,
+      r:Math.random()*9+3,color:colors[Math.floor(Math.random()*colors.length)],
+      alpha:1,decay:Math.random()*.02+.012,gravity:.4});
+  }
+  function boom(){
+    ctx.clearRect(0,0,fc.width,fc.height);
+    var alive=false;
+    particles.forEach(function(p){
+      p.vy+=p.gravity; p.x+=p.vx; p.y+=p.vy; p.alpha-=p.decay;
+      if(p.alpha>0){ alive=true;
+        ctx.save(); ctx.globalAlpha=p.alpha; ctx.fillStyle=p.color;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); ctx.restore();
+      }
+    });
+    if(alive) requestAnimationFrame(boom);
+    else fc.style.display='none';
+  }
+  boom();
+
+  // Show overlay with slot animation
+  ov.style.display='flex';
+  var emojis=['🎰','🎲','🎯','💰','🛍️','🔥','⭐','🎁'];
+  var count=0,msg=document.getElementById('fate-msg'),em=document.getElementById('fate-emoji');
+  var iv=setInterval(function(){
+    em.textContent=emojis[count%emojis.length]; count++;
+    if(count>=20){ clearInterval(iv); msg.textContent='決定！移動します…'; setTimeout(function(){form.submit();},500); }
+  },100);
+}
+</script>
 {% endblock %}

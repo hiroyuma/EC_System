@@ -32,10 +32,10 @@
       </div>
       <div style="display:flex;justify-content:flex-end;align-items:center;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--ink-200)">
         <b>合計</b>
-      
+     
         {% if discount != 0 %}
           <div style="text-align:right">
-      
+     
             {% if discount > 0 %}
               <div style="color:green;font-weight:700">
                 🎉 割引：{{ discount }}%
@@ -45,11 +45,11 @@
                 💀 追加料金：{{ abs_discount }}%
               </div>
             {% endif %}
-      
+     
             <span class="tmz-price tmz-price-lg">
               ¥{{ discounted_total|floatformat:"0" }}
             </span>
-      
+     
           </div>
         {% else %}
           <span class="tmz-price tmz-price-lg">
@@ -57,7 +57,6 @@
           </span>
         {% endif %}
       </div>
-      
 
     <div class="tmz-card">
       <h3 style="font-family:var(--fd);font-size:18px;font-weight:700;margin-bottom:16px">配送先の指定</h3>

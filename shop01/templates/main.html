@@ -76,49 +76,16 @@
       </div>
     </form>
 
-  </div>
-<div class="tmz-wrap" style="padding-top:22px">
-    {% if request.session.is_login %}
-    <div class="tmz-links" style="animation:slideInUp .4s .3s both">
-        <a href="{% url 'shop01:cart' %}">🛒 カート</a>
-        <a href="{% url 'shop01:user_info' %}">会員情報</a>
-        <a href="{% url 'shop01:purchase_history' %}">購入履歴</a>
-        <a href="{% url 'shop01:logout' %}" style="color:var(--ink-500)">ログアウト</a>
-        <a href="{% url 'shop01:admin_login' %}" style="color:var(--ink-400)">管理者</a>
-    </div>
-    <div style="text-align: center; margin-top: 40px; animation: slideInUp .5s .4s both;">
-      <form action="{% url 'shop01:random_purchase' %}" method="POST">
-        {% csrf_token %}
-        <button type="submit" style="background-color: #ff00ff; color: #fff; font-size: 20px; font-weight: bold; padding: 15px 40px; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(255,0,255,0.6); transition: transform 0.2s; animation: pulseGlow 2s infinite;" onmouseover="this.style.transform='scale(1.05) rotate(-2deg)'" onmouseout="this.style.transform='none'">
-            運命の1品を即時決済する（※キャンセル不可）
-        </button>
-      </form>
-  </div>
-    {% else %}
-    <div class="tmz-links" style="animation:slideInUp .4s .3s both">
-        <a href="{% url 'shop01:login' %}" class="tmz-btn tmz-btn-p tmz-btn-sm">ログイン</a>
-        <a href="{% url 'shop01:register_user' %}" class="tmz-btn tmz-btn-r tmz-btn-sm">新規登録</a>
-        <a href="{% url 'shop01:admin_login' %}" style="color:var(--ink-400);font-size:13px">管理者</a>
-    </div>
-    {% endif %}
+  </div>
+<!-- 運命の一品ボタン（ログイン時のみ） -->
+{% if request.session.is_login %}
+<div style="text-align:center;padding:32px 24px 28px;animation:slideInUp .5s .4s both">
+  <form action="{% url 'shop01:random_purchase' %}" method="POST">
+    {% csrf_token %}
+    <button type="submit" style="background:linear-gradient(135deg,#ff00ff,#FF5A2C);color:#fff;font-size:20px;font-weight:900;padding:16px 44px;border:none;border-radius:50px;cursor:pointer;box-shadow:0 0 28px rgba(255,0,255,.55);transition:transform .2s;animation:pulseGlow 2s infinite;font-family:var(--fd)" onmouseover="this.style.transform='scale(1.06) rotate(-2deg)'" onmouseout="this.style.transform='none'">
+      🎰 運命の1品を即時決済する（※キャンセル不可）
+    </button>
+  </form>
 </div>
-
-<!-- Nav links -->
-<div class="tmz-wrap" style="padding-top:20px;padding-bottom:12px">
-  {% if request.session.is_login %}
-  <div class="tmz-links">
-    <a href="{% url 'shop01:cart' %}">🛒 カート</a>
-    <a href="{% url 'shop01:user_info' %}">会員情報</a>
-    <a href="{% url 'shop01:purchase_history' %}">購入履歴</a>
-    <a href="{% url 'shop01:logout' %}" style="color:var(--ink-500)">ログアウト</a>
-    <a href="{% url 'shop01:admin_login' %}" style="color:var(--ink-400)">管理者</a>
-  </div>
-  {% else %}
-  <div class="tmz-links">
-    <a href="{% url 'shop01:login' %}" class="tmz-btn tmz-btn-p tmz-btn-sm">ログイン</a>
-    <a href="{% url 'shop01:register_user' %}" class="tmz-btn tmz-btn-r tmz-btn-sm">新規登録</a>
-    <a href="{% url 'shop01:admin_login' %}" style="color:var(--ink-400);font-size:13px">管理者</a>
-  </div>
-  {% endif %}
-</div>
+{% endif %}
 {% endblock %}

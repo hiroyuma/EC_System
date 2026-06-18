@@ -42,6 +42,15 @@
             </tbody>
           </table>
         </div>
+        
+        {% if purchase.discount > 0 %}
+        割引：{{ purchase.discount }}%
+        {% elif purchase.discount < 0 %}
+        追加料金：{{ purchase.discount }}%
+        {% endif %}
+
+        合計：¥{{ purchase.total_price }}
+
       </div>
       {% endfor %}
     {% else %}

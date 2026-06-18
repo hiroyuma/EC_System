@@ -129,7 +129,7 @@ ul.errorlist{color:var(--red-600);font-size:13px;font-weight:600;list-style:none
   <!-- Item register -->
   <div class="box">
     <h2>➕ 商品登録</h2>
-    <form method="post" action="{% url 'shop01:admin_item_create' %}">
+    <form method="post" action="{% url 'shop01:admin_item_create' %}" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="form-grid">
         {% for field in item_form %}

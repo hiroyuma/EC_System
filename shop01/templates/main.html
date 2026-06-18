@@ -15,7 +15,8 @@
 /* Search box */
 .tmz-search-box{display:flex;max-width:780px;border-radius:20px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.5),0 0 0 2px rgba(255,90,44,.5);transition:box-shadow .3s}
 .tmz-search-box:focus-within{box-shadow:0 12px 60px rgba(255,90,44,.6),0 0 0 3px #FF5A2C}
-.tmz-search-box input[type=text]{flex:1;padding:18px 22px;border:none;font-size:16px;font-family:var(--fb);font-weight:600;background:#fff;outline:none}
+.tmz-search-box input[type=text]{flex:3;min-width:0;padding:18px 22px;border:none;font-size:16px;font-family:var(--fb);font-weight:600;background:#fff;outline:none}
+.tmz-search-box select{flex:1;min-width:0;max-width:130px;padding:18px 10px;border:none;border-left:1px solid #eee;font-size:14px;font-family:var(--fb);font-weight:600;background:#fff;outline:none;cursor:pointer}
 .tmz-search-box input[type=submit]{padding:0 32px;background:linear-gradient(135deg,#FF7A4D,#FF5A2C,#CC0000);background-size:200% 100%;color:#fff;border:none;font-family:var(--fb);font-weight:900;font-size:17px;cursor:pointer;transition:background-position .3s,transform .15s;white-space:nowrap;flex-shrink:0}
 .tmz-search-box input[type=submit]:hover{background-position:100% 0;transform:scaleX(1.04)}
 

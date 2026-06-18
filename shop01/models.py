@@ -37,6 +37,9 @@ class ShoppingItem(models.Model):
     recommend = models.BooleanField(verbose_name='オススメ', default=False)
     image = models.ImageField(verbose_name='商品画像', upload_to='items/', null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
 class ShoppingItemincart(models.Model):
     class Meta:
         db_table = 'shopping_itemincart'

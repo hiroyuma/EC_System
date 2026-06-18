@@ -1,11 +1,11 @@
 -- 1. account_user（ユーザー）
 -- ※全国各地のユーザーを追加しました
 INSERT INTO account_user (user_id, password, name, address) VALUES
-('001', '111111', '山田 太郎', '東京都渋谷区神南1-2-3'),
+('001', '111111', 'ヒロチェバーク', '東京都渋谷区神南1-2-3'),
 ('002', '2222222', '佐藤 花子', '大阪府大阪市北区梅田4-5-6'),
 ('003', '3333333', '鈴木 一郎', '愛知県名古屋市中区栄7-8-9'),
 ('004', '4444444', '田中 美咲', '福岡県福岡市博多区博多駅前10-11-12'),
-('005', '5555555', '高橋 健太', '北海道札幌市中央区大通西13-14-15'),
+('005', '5555555', '高橋 健太', '北海道札幌市中央区大通西13-14-15');
 
 -- 2. shopping_category（カテゴリ）
 -- ※靴、アクセサリー、アウターを追加しました
@@ -57,4 +57,4 @@ INSERT INTO shopping_item (item_id, category_id, name, manufacture, color, price
 
 INSERT INTO administrator_admin (admin_id, password) VALUES
 ('admin999', 'admin999999'),
-('master_user', 'master000000'),
+('master_user', 'master000000');

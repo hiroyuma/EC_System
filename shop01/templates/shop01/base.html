@@ -326,6 +326,8 @@ main{animation:fadeInUp .35s ease-out both}
         <a href="{% url 'shop01:cart' %}">🛒 カート</a>
         <a href="{% url 'shop01:user_info' %}">会員情報</a>
         <a href="{% url 'shop01:logout' %}">ログアウト</a>
+        <a href="{% url 'shop01:purchase_history' %}">購入履歴</a>
+        <a href="{% url 'shop01:admin_login' %}" style="color:var(--ink-400)">管理者</a>
       {% else %}
         <a href="{% url 'shop01:login' %}" class="tmz-btn tmz-btn-s tmz-btn-sm">ログイン</a>
         <a href="{% url 'shop01:register_user' %}" class="tmz-btn tmz-btn-p tmz-btn-sm">新規登録</a>
